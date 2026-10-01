@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>도전! 주식벨</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+:root{--bg:#0b1b33;--card:#13294b;--ink:#f3f6fb;--mut:#9fb1cc;--acc:#ffc83d;--ok:#2fd38a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;min-height:100vh}
+#app{max-width:1100px;margin:0 auto;padding:20px}
+h1{margin:0;font-size:clamp(28px,5vw,48px);color:var(--acc)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--mut);font-size:clamp(14px,2vw,22px)}
+.q{font-size:clamp(24px,4.5vw,46px);font-weight:700;margin:28px 0;line-height:1.35}
+.row{position:relative;background:var(--card);border-radius:14px;margin:12px 0;overflow:hidden;border:3px solid transparent}
+.row .bar{position:absolute;inset:0 auto 0 0;background:#2a4f8a;transition:width .4s}
+.row .in{position:relative;display:flex;justify-content:space-between;gap:12px;padding:16px 20px;font-size:clamp(18px,3vw,32px)}
+.row.ok{border-color:var(--ok)}
+.big{font-size:clamp(60px,14vw,140px);font-weight:800;color:var(--acc);line-height:1}
+.btn{background:var(--acc);color:#1a1a1a;border:0;border-radius:12px;padding:14px 22px;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn.g{background:var(--card);color:var(--ink)}
+.btns{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+button.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--ink);border:3px solid transparent;border-radius:14px;padding:18px;margin:10px 0;font-size:20px;cursor:pointer;font-family:inherit}
+button.opt.sel{border-color:var(--acc);background:#2a4f8a}
+.center{text-align:center;padding-top:30px}
+#qr{background:#fff;display:inline-block;padding:12px;border-radius:12px}
+#qr svg{width:min(42vh,60vw,420px);height:auto;display:block}
+.msg{color:var(--mut);font-size:20px;margin-top:16px}
+.small{font-size:13px;color:var(--mut);word-break:break-all}
+body.lobby #app{max-width:none;padding:0}
+#lobby{min-height:100vh;display:flex;flex-direction:column;background:radial-gradient(circle at 50% 35%,#16396b,#0b1b33 70%)}
+.brand{text-align:center;padding:14px 10px 8px}
+.brand span{color:var(--mut);letter-spacing:.2em;font-size:clamp(14px,2vw,22px)}
+.tk{overflow:hidden;background:#071327;border-block:1px solid #26344d;white-space:nowrap}
+.trk{display:inline-flex;width:max-content;padding:10px 0;animation:scroll 45s linear infinite}
+.tk.rev .trk{animation-direction:reverse}
+@keyframes scroll{to{transform:translateX(-50%)}}
+.it{margin-right:36px;font-size:clamp(16px,2.2vw,26px);font-weight:600}
+.it b{color:#fff;margin-right:6px}
+.up{color:#ff5b5b}.dn{color:#5b9bff}
+.stage{flex:1;display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;padding:12px 24px}
+.side h3{margin:0 0 10px;font-size:clamp(16px,1.8vw,22px)}
+.br{display:grid;grid-template-columns:76px 1fr 96px;gap:10px;align-items:center;margin:10px 0;font-weight:700}
+.tb{height:18px;background:#1b2f52;border-radius:99px;overflow:hidden}
+.tb i{display:block;height:100%;width:0;transition:width .9s ease;border-radius:99px}
+.tb i.up{background:#ff5b5b}.tb i.dn{background:#5b9bff}
+.tv{text-align:right;font-size:15px}
+.mid{text-align:center}
+.cta{font-size:clamp(20px,2.6vw,32px);font-weight:800;margin:0 0 12px}
+.cntbox{margin-top:12px;color:var(--mut);font-size:clamp(16px,2vw,24px)}
+#lobby .big{font-size:clamp(48px,8vw,96px)}
+#cnt{display:inline-block}
+#cnt.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.18)}}
+.note{text-align:center;font-size:12px;color:var(--mut);margin:6px 0 10px}
+@media(max-width:900px){.stage{grid-template-columns:1fr}.side{display:none}}
+@media(prefers-reduced-motion:reduce){.trk{animation:none}}
+
+.sum{margin-top:16px;padding:14px 18px;border-radius:14px;background:#12372c;font-size:clamp(18px,2.6vw,30px);font-weight:700}
+.sum b{color:var(--ok)}
+.rr{display:grid;grid-template-columns:36px minmax(0,1.3fr) minmax(0,1fr) 120px;gap:12px;align-items:center;margin:8px 0;padding:4px 8px;font-size:clamp(15px,1.9vw,22px)}
+.rr.worst{background:#3b1c20;border-radius:12px}
+.rr .no{font-weight:800;color:var(--acc)}
+.rr .rt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rr .rv{text-align:right;font-weight:800}
+.rr .rv small{display:block;font-size:.62em;color:var(--mut);font-weight:500}
+.tb i.dn2{background:#ff6b6b}
+@media(max-width:700px){.rr{grid-template-columns:30px 1fr 90px}.rr .tb{display:none}}
+</style></head><body><div id="app"><div class="center msg">연결 중…</div></div>
+<script>
+const Q=[
+{t:"방구석월가 유튜브 채널주소는?",o:["Rwallst","Banguseok","Roomwallst","Bangwallst"],a:2},
+{t:"다음 중 올바른 ETF의 약자는?",o:["Emart Traders Fund","Emart Total Fund","Exchange Traded Fund","Exchange Total Fund"],a:2},
+{t:"S&P500 지수 연 평균 수익률은?",o:["7%","22%","30%","10%"],a:3},
+{t:"[OX] 시간이 내편이 되는건 투기다?",o:["O","X"],a:1},
+{t:"[OX] 주가가 떨어지면 무조건 싼 주식?",o:["O","X"],a:1},
+{t:"다음 중 필수소비재가 아닌 것은?",o:["현대자동차","코카콜라","펩시","오뚜기"],a:0},
+{t:"다음 중 안전 자산이 아닌 것은?",o:["금","부동산","주식","달러"],a:2},
+{t:"[OX] 레버리지는 오를때 2배, 내릴때도 2배다?",o:["O","X"],a:0},
+{t:"다음 중 다우존스 30에 편입된 주식이 아닌 것은?",o:["스타벅스","맥도날드","애플","디즈니"],a:0},
+{t:"장기투자에 가장 필요한 능력은?",o:["시장이 흔들려도 자신의 투자 원칙을 지키는 능력","내일 오를 주식을 맞추는 능력","매일 주가를 확인하는 능력","가장 높은 수익률의 종목을 찾는 능력"],a:0}
+];
+const app=document.getElementById('app');
+const hostId=new URLSearchParams(location.search).get('r')||location.hash.slice(1);
+const isHost=!hostId;
+const conns=new Map(),pids=new Map();          // 호스트: 참가자 연결
+const answers={};               // 호스트: answers[q][connId]=보기번호
+let q=-1,rev=false,joinUrl='',mine={},linked=false;
+
+/* ---------- 호스트 ---------- */
+function broadcast(){conns.forEach(c=>{if(c.open)c.send({t:'state',q})})}
+function setQ(n,r){q=n;rev=!!r;broadcast();renderHost()}
+window.setQ=setQ;
+function startHost(){
+  let id=null;try{id=localStorage.getItem('sbid')}catch(e){}
+  const peer=id?new Peer(id):new Peer();
+  peer.on('error',e=>{if(e.type==='unavailable-id'){try{localStorage.removeItem('sbid')}catch(_){}location.reload()}else app.innerHTML='<div class="center msg">연결 오류: '+e.type+'<br>새로고침 해주세요.</div>'});
+  peer.on('open',pid=>{
+    try{localStorage.setItem('sbid',pid)}catch(e){}
+    joinUrl=location.href.split('#')[0].split('?')[0]+'?r='+pid;
+    renderHost();
+  });
+  peer.on('connection',c=>{
+    const key=c.peer+c.connectionId;
+    c.on('open',()=>{conns.set(key,c);renderHost()});
+    c.on('data',d=>{
+      if(!d||typeof d.pid!=='string'||d.pid.length>40)return;
+      if(d.t==='hi'){pids.set(key,d.pid);const my=answers[q]?answers[q][d.pid]:undefined;c.send({t:'state',q,my});renderHost()}
+      else if(d.t==='ans'&&Number.isInteger(d.q)&&Number.isInteger(d.a)&&d.q>=0&&d.q<Q.length&&d.a>=0&&d.a<Q[d.q].o.length){
+        (answers[d.q]=answers[d.q]||{})[d.pid]=d.a;renderHost()}
+    });
+    const gone=()=>{conns.delete(key);pids.delete(key);renderHost()};
+    c.on('close',gone);c.on('error',gone);
+  });
+}
+function counts(i){const m=answers[i]||{},r=Q[i].o.map(()=>0);let tot=0;for(const k in m){r[m[k]]++;tot++}return{r,tot}}
+const TK=['AAPL','MSFT','NVDA','TSLA','AMZN','GOOGL','META','NFLX','KO','PEP','MCD','DIS','JPM','SPY','QQQ','GLD'].map(s=>({s,c:Math.random()*6-3}));
+const fmt=c=>c>=0?'▲ +'+c.toFixed(2)+'%':'▼ '+c.toFixed(2)+'%';
+function tkHtml(rev){const a=TK.map((t,i)=>'<span class="it" data-t="'+i+'"></span>');if(rev)a.reverse();const s=a.join('');return s+s}
+function rows(){return Array.from({length:5},()=>'<div class="br"><span class="tn"></span><div class="tb"><i></i></div><span class="tv"></span></div>').join('')}
+function fill(id,arr){const rs=document.querySelectorAll('#'+id+' .br');arr.forEach((t,k)=>{const r=rs[k];if(!r)return;const cls=t.c>=0?'up':'dn';r.querySelector('.tn').textContent=t.s;const i=r.querySelector('i');i.style.width=Math.min(100,Math.abs(t.c)/9*100)+'%';i.className=cls;const v=r.querySelector('.tv');v.textContent=fmt(t.c);v.className='tv '+cls})}
+function paintTk(){
+  TK.forEach((t,i)=>document.querySelectorAll('[data-t="'+i+'"]').forEach(e=>{e.className='it '+(t.c>=0?'up':'dn');e.innerHTML='<b>'+t.s+'</b>'+fmt(t.c)}));
+  const s=TK.slice().sort((a,b)=>b.c-a.c);fill('gain',s.slice(0,5));fill('lose',s.slice(-5).reverse());
+}
+setInterval(()=>{if(!document.getElementById('lobby'))return;TK.forEach(t=>{t.c=Math.max(-9,Math.min(9,t.c+(Math.random()-.5)*1.1))});paintTk()},1200);
+function buildLobby(n){
+  const bad=!/^https?:$/.test(location.protocol)||/^(localhost|127\.|192\.168\.|10\.)/.test(location.hostname)||window.self!==window.top;
+  const warn=bad?'<p class="msg" style="color:#ff9b9b;font-size:16px">⚠ 이 주소는 핸드폰에서 열 수 없을 수 있어요. GitHub Pages 같은 https 인터넷 주소로 연 화면에서 QR을 사용하세요.</p>':'';
+  app.innerHTML='<div id="lobby"><div class="brand"><span>방구석월가</span><h1>🔔 도전! 주식벨</h1></div><div class="tk"><div class="trk">'+tkHtml(false)+'</div></div>'+
+  '<div class="stage"><div class="side" id="gain"><h3>🔺 상승률 TOP 5</h3>'+rows()+'</div>'+
+  '<div class="mid"><p class="cta">📱 QR을 찍고 참여하세요</p><div id="qr"></div><div class="cntbox">현재 접속 인원<div class="big"><span id="cnt">'+n+'</span>명</div></div><div class="btns" style="justify-content:center"><button class="btn" onclick="setQ(0,false)">시작하기 ▶</button></div>'+warn+'<p class="small">'+joinUrl+'</p></div>'+
+  '<div class="side" id="lose"><h3>🔻 하락률 TOP 5</h3>'+rows()+'</div></div>'+
+  '<div class="tk rev"><div class="trk">'+tkHtml(true)+'</div></div><p class="note">※ 종목 등락률은 화면 연출용 가상 수치입니다</p></div>';
+  try{const x=qrcode(0,'M');x.addData(joinUrl);x.make();const el=document.getElementById('qr');el.innerHTML=x.createSvgTag(6,0);const s=el.firstChild;
+    if(!s.getAttribute('viewBox'))s.setAttribute('viewBox','0 0 '+parseFloat(s.getAttribute('width'))+' '+parseFloat(s.getAttribute('height')));
+    s.removeAttribute('width');s.removeAttribute('height')}catch(e){}
+  paintTk();
+}
+function renderResults(){
+  const st=Q.map((Z,i)=>{const{r,tot}=counts(i),ok=r[Z.a];return{i,tot,ok,w:tot?Math.round((tot-ok)/tot*100):null}});
+  const worst=st.filter(x=>x.w!==null).sort((a,b)=>b.w-a.w)[0];
+  app.innerHTML='<div class="top"><h1 style="font-size:28px">📊 결과 발표</h1><span>문제별 오답률</span></div>'+
+  (worst?'<p class="msg" style="margin:10px 0">가장 많이 틀린 문제: <b style="color:var(--acc)">문제 '+(worst.i+1)+' ('+worst.w+'%)</b></p>':'')+
+  st.map(x=>'<div class="rr'+(worst&&x.i===worst.i?' worst':'')+'"><span class="no">'+(x.i+1)+'</span><span class="rt">'+Q[x.i].t+'</span><div class="tb"><i class="dn2" style="width:'+(x.w||0)+'%"></i></div><span class="rv">'+(x.w===null?'-':x.w+'%')+'<small>정답 '+x.ok+' / 응답 '+x.tot+'</small></span></div>').join('')+
+  '<div class="btns"><button class="btn g" onclick="setQ('+(Q.length-1)+',true)">◀ 마지막 문제</button></div>';
+}
+function renderHost(){
+  const n=new Set([...conns.keys()].map(k=>pids.get(k)||k)).size;
+  if(!joinUrl){return}
+  document.body.classList.toggle('lobby',q<0);
+  if(q<0){
+    const c=document.getElementById('cnt');
+    if(c&&document.getElementById('lobby')){if(c.textContent!=String(n)){c.textContent=n;c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop')}return}
+    buildLobby(n);return}
+  if(q>=Q.length){renderResults();return}
+  const Z=Q[q],{r,tot}=counts(q),mx=Math.max(1,...r);
+  const ok=r[Z.a],sumHtml=tot?`<div class="sum">✅ 정답 <b>${ok}명</b> / 응답 ${tot}명 · 정답률 ${Math.round(ok/tot*100)}% · 오답률 ${Math.round((tot-ok)/tot*100)}%</div>`:'<div class="sum">응답 없음</div>';
+  app.innerHTML=`<div class="top"><h1 style="font-size:28px">🔔 도전! 주식벨</h1><span>문제 ${q+1}/${Q.length} · 접속 ${n}명 · 응답 ${tot}명</span></div><div class="q">${Z.t}</div>`+
+  Z.o.map((o,i)=>`<div class="row ${rev&&i===Z.a?'ok':''}"><div class="bar" style="width:${r[i]/mx*100}%"></div><div class="in"><span>${Z.o.length>2?(i+1)+'. ':''}${o}${rev&&i===Z.a?' ✔ 정답':''}</span><b>${r[i]}명</b></div></div>`).join('')+
+  (rev?sumHtml:'')+`<div class="btns"><button class="btn g" onclick="setQ(${q-1},false)">◀ 이전</button><button class="btn g" onclick="setQ(${q},${!rev})">${rev?'정답 숨기기':'정답 공개'}</button><button class="btn" onclick="setQ(${q+1},false)">${q===Q.length-1?'마무리':'다음 ▶'}</button></div>`;
+}
+
+/* ---------- 참가자 ---------- */
+let conn=null,retry=null,lastErr='',t0=Date.now(),pid=null;
+try{pid=localStorage.getItem('sbp')}catch(e){}
+if(!pid){pid=Math.random().toString(36).slice(2,10)+Date.now().toString(36);try{localStorage.setItem('sbp',pid)}catch(e){}}
+function again(peer){if(retry)return;try{peer.destroy()}catch(e){}linked=false;renderPlayer();retry=setTimeout(()=>{retry=null;connect()},2500)}
+function connect(){
+  const peer=new Peer();
+  peer.on('open',()=>{
+    conn=peer.connect(hostId,{reliable:true});
+    conn.on('open',()=>{linked=true;lastErr='';conn.send({t:'hi',pid});renderPlayer()});
+    conn.on('data',d=>{if(d&&d.t==='state'){q=d.q;if(d.my!==undefined&&d.q>=0)mine[d.q]=d.my;renderPlayer()}});
+    conn.on('close',()=>again(peer));conn.on('error',()=>again(peer));
+  });
+  peer.on('error',e=>{lastErr=e.type||'error';again(peer)});
+}
+function pick(i){if(!linked||q<0||q>=Q.length)return;mine[q]=i;conn.send({t:'ans',pid,q,a:i});renderPlayer()}
+window.pick=pick;
+function renderPlayer(){
+  if(!linked){const slow=Date.now()-t0>8000;const hint=lastErr==='peer-unavailable'?'진행자 화면을 찾을 수 없어요.<br>진행자 화면의 QR을 다시 찍어주세요.':(slow?'연결이 오래 걸려요.<br>와이파이 ↔ LTE로 바꿔서 시도하거나 새로고침 해보세요.':'');
+    app.innerHTML='<div class="center"><h1>🔔 도전! 주식벨</h1><p class="msg">연결 중…</p><p class="msg" style="font-size:16px">'+hint+'</p>'+(lastErr?'<p class="small">'+lastErr+'</p>':'')+'</div>';return}
+  if(q<0){app.innerHTML='<div class="center"><h1>🔔 도전! 주식벨</h1><p class="msg">접속 완료! 곧 시작합니다 😊</p></div>';return}
+  if(q>=Q.length){app.innerHTML='<div class="center"><h1>🎉 수고하셨습니다!</h1></div>';return}
+  const Z=Q[q],m=mine[q];
+  app.innerHTML=`<div class="top"><span>문제 ${q+1}/${Q.length}</span></div><div class="q" style="font-size:clamp(22px,6vw,32px)">${Z.t}</div>`+
+  Z.o.map((o,i)=>`<button class="opt ${m===i?'sel':''}" onclick="pick(${i})">${Z.o.length>2?(i+1)+'. ':''}${o}</button>`).join('')+
+  `<p class="msg">${m===undefined?'보기를 눌러 선택하세요':'선택 완료! 다음 문제를 기다려주세요'}</p>`;
+}
+
+if(isHost)startHost();else{renderPlayer();connect();setInterval(()=>{if(!linked)renderPlayer()},2000)}
+</script></body></html>
