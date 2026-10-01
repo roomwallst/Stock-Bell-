@@ -8,8 +8,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT/fonts/variable/woff2/SUIT-Variable.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>\n<style>
 :root{
   --bg:#f4f7fb;--card:#fff;--ink:#14213d;--mut:#667085;--line:#dfe6f0;
   --brand:#1f5eff;--brandInk:#fff;--ok:#12a36b;--okBg:#e6f7ef;--bad:#e5484d;--badBg:#fdecec;--track:#dfe6f0;
@@ -270,7 +269,8 @@ function showDone() {
 
 showQuestion();
 </script>
-<script>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 /* ===== 랜딩 전용 스크립트 (퀴즈 로직과 독립) ===== */
 (function () {
   // ▼ 참여 QR 주소: 배포 후 GitHub Pages 주소로 이 한 곳만 교체하세요. 비워두면 현재 페이지 주소를 사용합니다.
