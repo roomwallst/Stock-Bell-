@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT/fonts/variable/woff2/SUIT-Variable.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#f4f7fb;--card:#fff;--ink:#14213d;--mut:#667085;--line:#dfe6f0;
@@ -300,7 +300,8 @@ showQuestion();
   }
 
   function renderQR() {
-    const url = JOIN_URL || location.href.split("#")[0];
+    const base = location.origin + location.pathname;
+    const url = JOIN_URL || (base + "?join=1");
     const box = $("qr-code");
     try {
       const qr = qrcode(0, "M");
