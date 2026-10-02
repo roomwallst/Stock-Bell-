@@ -281,7 +281,7 @@ function activeParticipantIds(){
   const cutoff = Date.now() - 45000;
   return new Set(participants.filter(p => new Date(p.last_seen).getTime() >= cutoff).map(p => p.participant_id));
 }
-function nConn(){ return activeParticipantIds().size; }
+function nConn(){ return new Set(participants.map(p => p.participant_id)).size; }
 function counts(i){
   const r = Q[i].o.map(() => 0);
   let tot = 0;
@@ -418,8 +418,7 @@ function renderHost(){
   if (q < 0) { buildLobby(); return; }
   if (q >= Q.length) { renderResults(n); return; }
   const Z = Q[q], c = counts(q), r = c.r, tot = c.tot, mx = Math.max(1,...r), ok = r[Z.a];
-  const live = activeParticipantIds();
-  const subLive = new Set(answerRows.filter(a => a.question_no === q && live.has(a.participant_id)).map(a => a.participant_id)).size;
+  const subLive = new Set(answerRows.filter(a => a.question_no === q).map(a => a.participant_id)).size;
   const pct = n ? Math.min(100, Math.round(subLive / n * 100)) : 0;
   let body;
   if (!rev) {
