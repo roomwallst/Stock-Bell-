@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f2a52">
+<title>방구석월가 · 도전! 주식벨</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT/fonts/variable/woff2/SUIT-Variable.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#f4f7fb;--card:#fff;--ink:#14213d;--mut:#667085;--line:#dfe6f0;
+  --brand:#1f5eff;--brandInk:#fff;--ok:#12a36b;--okBg:#e6f7ef;--bad:#e5484d;--badBg:#fdecec;--track:#dfe6f0;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0d1626;--card:#162238;--ink:#eef3fb;--mut:#9db0cc;--line:#26344d;
+    --brand:#5b8cff;--brandInk:#0d1626;--ok:#38d39b;--okBg:#12372c;--bad:#ff7b80;--badBg:#3b1c20;--track:#26344d}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Pretendard Variable",Pretendard,"SUIT Variable",SUIT,"Noto Sans KR","Apple SD Gothic Neo",system-ui,-apple-system,sans-serif;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 16px env(safe-area-inset-bottom,0)}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top,0) + 14px) 0 10px}
+.hrow{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;color:var(--mut);margin-bottom:8px}
+.hrow b{color:var(--ink);font-size:17px}
+.track{height:10px;background:var(--track);border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--brand);border-radius:99px;transition:width .35s ease}
+main{flex:1;padding:12px 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 20px}
+.tag{display:inline-block;font-size:13px;font-weight:700;color:var(--brand);margin-bottom:10px}
+.q{font-size:clamp(22px,5.8vw,26px);font-weight:700;line-height:1.4;margin:0;word-break:keep-all}
+.opts{display:grid;gap:12px;margin-top:18px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:62px;padding:14px 16px;text-align:left;font:inherit;font-size:18px;font-weight:600;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:16px;cursor:pointer;word-break:keep-all;transition:transform .08s,border-color .15s}
+.opt:active:not(:disabled){transform:scale(.98)}
+.opt .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-size:15px;font-weight:800;color:var(--mut)}
+.opt.ox{justify-content:center;font-size:32px;min-height:88px;font-weight:800}
+.oxrow{grid-template-columns:1fr 1fr}
+.opt.ok{border-color:var(--ok);background:var(--okBg)}
+.opt.bad{border-color:var(--bad);background:var(--badBg)}
+.opt:disabled{cursor:default}
+.opt:disabled:not(.ok):not(.bad){opacity:.55}
+.fb{margin-top:16px;border-radius:16px;padding:16px 18px;font-size:16px}
+.fb.ok{background:var(--okBg)}.fb.bad{background:var(--badBg)}
+.fb h3{margin:0 0 4px;font-size:18px}
+.fb.ok h3{color:var(--ok)}.fb.bad h3{color:var(--bad)}
+.fb p{margin:0;word-break:keep-all}
+footer{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 28%);padding:14px 0 calc(env(safe-area-inset-bottom,0) + 14px)}
+.btn{display:block;width:100%;min-height:58px;border:0;border-radius:16px;background:var(--brand);color:var(--brandInk);font:inherit;font-size:19px;font-weight:800;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--brand);border:2px solid var(--brand);margin-top:10px}
+.btn:active{transform:scale(.98)}
+.done{text-align:center}
+.done .emoji{font-size:56px}
+.done h1{margin:6px 0 4px;font-size:30px}
+.done .sub{color:var(--mut);margin:0 0 18px}
+.concepts{list-style:none;margin:0;padding:0;text-align:left;display:grid;gap:10px}
+.concepts li{background:var(--bg);border-radius:14px;padding:12px 14px;font-size:16px;word-break:keep-all}
+.concepts b{display:block;font-size:17px}
+.recheck{display:inline-block;margin-left:6px;font-size:12px;font-weight:800;color:var(--bad);background:var(--badBg);border-radius:99px;padding:1px 8px;vertical-align:1px}
+h2{font-size:18px;margin:22px 0 10px;text-align:left}
+
+/* ===== 랜딩 페이지 (퀴즈 영역과 분리) ===== */
+:root{--navy:#0f2a52;--navy2:#0a2147;--accent:#1f5eff;--shadow:0 8px 28px rgba(15,42,82,.08)}
+@media (prefers-color-scheme:dark){:root{--navy:#0a1d3a;--navy2:#06142a;--accent:#5b8cff;--shadow:0 8px 28px rgba(0,0,0,.35)}}
+body{overflow-x:hidden}
+.card{box-shadow:var(--shadow)}
+#landing-screen{min-height:100vh;min-height:100dvh;background:var(--bg);overflow-x:hidden}
+.hero{background:var(--navy);color:#fff;text-align:center;padding:calc(env(safe-area-inset-top,0px) + 36px) 20px 28px}
+.eyebrow{margin:0 0 6px;font-size:clamp(16px,4.4vw,20px);font-weight:500;color:rgba(255,255,255,.78)}
+#landing-title{margin:0;font-size:clamp(32px,9vw,38px);font-weight:800;letter-spacing:-.02em;line-height:1.2;word-break:keep-all}
+.ticker{background:var(--navy2);overflow:hidden;white-space:nowrap;border-top:1px solid rgba(255,255,255,.08)}
+.ticker-track{display:inline-flex;width:max-content;padding:13px 0;animation:tick var(--dur,30s) linear infinite}
+.t-item{margin-right:30px;font-size:16px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+.t-item b{margin-right:8px;font-weight:700}
+.t-up{color:#3be09b}.t-dn{color:#ff7a82}
+@keyframes tick{to{transform:translateX(-50%)}}
+.l-main{max-width:560px;margin:0 auto;padding:20px 20px calc(env(safe-area-inset-bottom,0px) + 28px);--qr:clamp(200px,62vw,300px)}
+.l-card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:26px 20px;text-align:center}
+.qr-box{width:var(--qr);max-width:100%;aspect-ratio:1;margin:0 auto;padding:14px;background:#fff;border-radius:20px;border:1px solid #e6ebf3;display:grid;place-items:center;overflow:hidden}
+#qr-code{width:100%;height:100%}
+#qr-code svg{width:100%;height:100%;display:block}
+.qr-fallback{font-size:13px;color:#445;word-break:break-all;text-align:center}
+#qr-caption{margin:18px 0 0;font-size:clamp(17px,4.6vw,20px);font-weight:600;line-height:1.45;word-break:keep-all}
+.pc{margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.pc-label{display:block;font-size:15px;font-weight:500;color:var(--mut)}
+.pc-num{margin-top:4px;color:var(--accent);font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+#participant-count{display:inline-block;font-size:clamp(44px,12vw,56px)}
+.pc-unit{font-size:clamp(22px,6vw,28px);margin-left:4px}
+#participant-count.bump{animation:bump .4s ease}
+@keyframes bump{40%{transform:scale(1.22)}}
+#start-quiz-btn{margin-top:20px}
+.l-note{margin:14px 0 0;text-align:center;font-size:13px;color:var(--mut)}
+@media(min-width:900px){
+  #landing-title{font-size:clamp(48px,5vw,60px)}
+  .hero{padding-top:48px;padding-bottom:36px}
+  .l-main{max-width:720px;--qr:min(38vh,380px)}
+  .l-card{padding:32px}
+  #participant-count{font-size:64px}
+  .t-item{font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){.ticker-track{animation:none}.ticker{overflow-x:auto}#participant-count.bump{animation:none}}
+
+/* ===== 실시간 진행(라이브) 전용 ===== */
+.opt.sel{border-color:var(--brand);background:rgba(31,94,255,.1)}
+.hint{margin:16px 0 0;color:var(--mut);font-size:16px;text-align:center;word-break:keep-all}
+.wrap.host{max-width:1000px}
+.host .q{font-size:clamp(24px,3.4vw,44px)}
+.vrow{position:relative;border:2px solid var(--line);border-radius:16px;margin:12px 0;overflow:hidden;background:var(--card)}
+.vrow .bar{position:absolute;inset:0 auto 0 0;background:rgba(31,94,255,.16);transition:width .4s}
+.vrow .in{position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;font-size:clamp(18px,2.6vw,30px);font-weight:600;word-break:keep-all}
+.vrow .in b{flex:none;font-variant-numeric:tabular-nums;font-weight:800}
+.vrow.ok{border-color:var(--ok);background:var(--okBg)}
+.vrow.ok .bar{background:rgba(18,163,107,.25)}
+.sum{margin-top:16px;padding:14px 18px;border-radius:14px;background:var(--okBg);font-size:clamp(17px,2.4vw,26px);font-weight:700;word-break:keep-all}
+.sum b{color:var(--ok)}
+.host .fb{font-size:clamp(16px,2vw,22px)}
+.fbtns{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:10px}
+.fbtns.one{grid-template-columns:1fr}
+.fbtns .btn{margin:0}
+.rr{display:grid;grid-template-columns:34px minmax(0,1.3fr) minmax(0,1fr) 120px;gap:12px;align-items:center;margin:8px 0;padding:6px 10px;border-radius:12px;font-size:clamp(15px,1.9vw,21px)}
+.rr.worst{background:var(--badBg)}
+.rr .no{font-weight:800;color:var(--brand)}
+.rr .rt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rr .rb{height:16px;background:var(--track);border-radius:99px;overflow:hidden}
+.rr .rb i{display:block;height:100%;background:var(--bad);border-radius:99px;transition:width .6s}
+.rr .rv{text-align:right;font-weight:800}
+.rr .rv small{display:block;font-size:13px;color:var(--mut);font-weight:500}
+.worstline{margin:6px 0 12px;font-size:clamp(16px,2.2vw,22px);color:var(--mut)}
+.worstline b{color:var(--bad)}
+.warnbox{margin:12px 0 0;color:var(--bad);font-size:15px;word-break:keep-all}
+.small-url{margin:10px 0 0;font-size:13px;color:var(--mut);word-break:break-all}
+@media(max-width:700px){.rr{grid-template-columns:30px 1fr 84px}.rr .rb{display:none}.fbtns{grid-template-columns:1fr 1.3fr 1fr}.fbtns .btn{font-size:16px;padding:0 6px}}
+.subbox{margin:6px 0 16px}
+.subtxt{font-size:clamp(20px,3vw,34px);font-weight:700;margin-bottom:10px}
+.subtxt b{color:var(--brand);font-size:1.3em}
+.subbox .track{height:14px}
+.vrow.plain .in{font-weight:500}
+.btn:disabled{opacity:.45;cursor:default}
+.opt.sel:disabled{opacity:1}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* 퀴즈 데이터 (복습 퀴즈와 동일) */
+const QUIZ = [
+  {
+    q: "방구석월가 유튜브 채널주소는?",
+    o: ["Rwallst", "Banguseok", "Roomwallst", "Bangwallst"], a: 2,
+    exp: "정답은 Roomwallst예요. 채널을 검색하거나 주소를 입력할 때 철자를 꼭 확인하세요.",
+    concept: ["학습 채널 주소", "방구석월가 채널 주소는 Roomwallst"]
+  },
+  {
+    q: "다음 중 올바른 ETF의 약자는?",
+    o: ["Emart Traders Fund", "Emart Total Fund", "Exchange Traded Fund", "Exchange Total Fund"], a: 2,
+    exp: "ETF는 Exchange Traded Fund, 즉 거래소에 상장되어 주식처럼 사고팔 수 있는 펀드(상장지수펀드)예요.",
+    concept: ["ETF", "거래소에 상장되어 주식처럼 거래되는 펀드"]
+  },
+  {
+    q: "S&P500 지수 연 평균 수익률은?",
+    o: ["7%", "22%", "30%", "10%"], a: 3,
+    exp: "S&P500은 장기적으로 연평균 약 10% 수준의 수익률을 보여왔어요. 과거 평균일 뿐, 매년 같은 수익이 나거나 미래가 보장되는 건 아니에요.",
+    concept: ["S&P500 장기 수익률", "과거 연평균 약 10%, 단 미래 보장은 아님"]
+  },
+  {
+    q: "시간이 내편이 되는 건 투기다?", ox: true,
+    o: ["O", "X"], a: 1,
+    exp: "X예요. 시간이 내 편이 되는 건 장기 투자예요. 시간이 쌓일수록 복리 효과가 커지는 게 투자의 강점이에요.",
+    concept: ["장기 투자와 복리", "시간이 쌓일수록 복리 효과가 커짐"]
+  },
+  {
+    q: "주가가 떨어지면 무조건 싼 주식이다?", ox: true,
+    o: ["O", "X"], a: 1,
+    exp: "X예요. 주가가 내려갔다고 싼 게 아니에요. 기업의 가치와 실적에 비해 가격이 낮은지를 따져봐야 해요.",
+    concept: ["싼 주식의 기준", "주가 하락 ≠ 저평가, 기업 가치와 비교"]
+  },
+  {
+    q: "다음 중 필수소비재가 아닌 것은?",
+    o: ["현대자동차", "코카콜라", "펩시", "오뚜기"], a: 0,
+    exp: "자동차는 경기에 따라 소비가 달라지는 경기소비재예요. 음료·식품처럼 경기와 상관없이 꾸준히 쓰는 게 필수소비재예요.",
+    concept: ["필수소비재 vs 경기소비재", "음료·식품은 필수, 자동차는 경기소비재"]
+  },
+  {
+    q: "다음 중 안전 자산이 아닌 것은?",
+    o: ["금", "부동산", "주식", "달러"], a: 2,
+    exp: "주식은 가격 변동이 큰 위험 자산이에요. 금이나 달러는 불안한 시기에 상대적으로 안전하다고 여겨지는 자산이에요.",
+    concept: ["안전 자산 vs 위험 자산", "주식은 변동성이 큰 위험 자산"]
+  },
+  {
+    q: "레버리지는 오를 때 2배, 내릴 때도 2배다?", ox: true,
+    o: ["O", "X"], a: 0,
+    exp: "O예요. 레버리지 상품은 수익도 손실도 같은 배수로 커져요. 오래 들고 있으면 기대와 다르게 움직일 수 있어 주의가 필요해요.",
+    concept: ["레버리지", "수익도 손실도 배수로 커지는 양날의 검"]
+  },
+  {
+    q: "다음 중 다우존스 30에 편입된 주식이 아닌 것은?",
+    o: ["스타벅스", "맥도날드", "애플", "디즈니"], a: 0,
+    exp: "스타벅스는 다우존스 30 종목이 아니에요. 맥도날드, 애플, 디즈니는 다우존스 30에 포함된 대표 기업이에요.",
+    concept: ["다우존스 30", "미국 대표 대형 우량주 30개로 구성된 지수"]
+  },
+  {
+    q: "장기투자에 가장 필요한 능력은?",
+    o: ["시장이 흔들려도 자신의 투자 원칙을 지키는 능력", "내일 오를 주식을 맞추는 능력", "매일 주가를 확인하는 능력", "가장 높은 수익률의 종목을 찾는 능력"], a: 0,
+    exp: "장기투자의 핵심은 예측이 아니라 원칙이에요. 시장이 흔들려도 내 기준을 지키는 힘이 가장 중요해요.",
+    concept: ["장기투자의 핵심", "예측보다 원칙, 흔들려도 지키는 힘"]
+  }
+];
+
+/* ================= 실시간(라이브) 로직 ================= */
+// ▼ QR 기본 주소: 비워 두면 현재 페이지 주소를 사용합니다. 다른 주소를 쓰려면 여기 한 곳만 바꾸세요.
+const BASE_URL = "";
+
+// ▼ 티커 데이터 (연출용 정적 데이터). 나중에 API 응답을 같은 형태 [{symbol, change}]로 넘기면 됩니다.
+const TICKER_DATA = [
+  { symbol: "AAPL", change: 1.24 }, { symbol: "NVDA", change: 2.11 },
+  { symbol: "MSFT", change: -0.42 }, { symbol: "AMZN", change: 0.81 },
+  { symbol: "TSLA", change: -1.35 }, { symbol: "GOOGL", change: 0.57 },
+  { symbol: "META", change: 1.68 }, { symbol: "KO", change: -0.18 },
+  { symbol: "MCD", change: 0.33 }, { symbol: "DIS", change: -0.76 },
+  { symbol: "SPY", change: 0.45 }, { symbol: "QQQ", change: 0.92 }
+];
+
+const Q = QUIZ;
+const $ = id => document.getElementById(id);
+const app = $("app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hostId = new URLSearchParams(location.search).get("r") || location.hash.slice(1);
+const isHost = !hostId;
+const conns = new Map(), pids = new Map(), answers = {};
+let q = -1, rev = false, joinUrl = "", linked = false, mine = {}, sel = {}, pending = {}, stat = null;
+const revealed = new Set();
+
+function renderTicker(data) {
+  const html = data.map(d => {
+    const up = d.change >= 0;
+    return '<span class="t-item ' + (up ? "t-up" : "t-dn") + '"><b>' + esc(d.symbol) + "</b>" +
+      (up ? "+" : "") + d.change.toFixed(2) + "% " + (up ? "▲" : "▼") + "</span>";
+  }).join("");
+  const track = $("ticker-track");
+  if (!track) return;
+  track.innerHTML = html + '<span aria-hidden="true">' + html + "</span>";
+  track.style.setProperty("--dur", Math.max(20, data.length * 3) + "s");
+}
+function setCount(n) {
+  const el = $("participant-count");
+  if (!el || el.textContent === String(n)) return;
+  el.textContent = n;
+  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+}
+
+/* ---------- 진행자(호스트) ---------- */
+function stateMsg() {
+  let st;
+  if (rev && q >= 0 && q < Q.length) { const { r, tot } = counts(q); st = { ok: r[Q[q].a], tot }; }
+  return { t: "state", q, rev, st };
+}
+function broadcast() { const m = stateMsg(); conns.forEach(c => { if (c.open) c.send(m); }); }
+function setQ(n, r) {
+  q = Math.max(-1, Math.min(Q.length, n));
+  if (r && q >= 0 && q < Q.length) revealed.add(q);
+  rev = q >= 0 && q < Q.length && revealed.has(q); // 한 번 공개한 문제는 다시 숨겨지지 않음(제출 마감 유지)
+  broadcast(); renderHost();
+}
+window.setQ = setQ;
+function nConn() { return new Set([...conns.keys()].map(k => pids.get(k) || k)).size; }
+function counts(i) {
+  const m = answers[i] || {}, r = Q[i].o.map(() => 0); let tot = 0;
+  for (const k in m) { r[m[k]]++; tot++; }
+  return { r, tot };
+}
+
+function startHost() {
+  let id = null; try { id = localStorage.getItem("sbid"); } catch (e) {}
+  const peer = id ? new Peer(id) : new Peer();
+  peer.on("error", e => {
+    if (e.type === "unavailable-id") { try { localStorage.removeItem("sbid"); } catch (_) {} location.reload(); }
+    else app.innerHTML = '<div class="wrap"><div class="card done" style="margin-top:40px"><h1>연결 오류</h1><p class="sub">' + esc(e.type) + '<br>새로고침 해주세요.</p></div></div>';
+  });
+  peer.on("open", pid => {
+    try { localStorage.setItem("sbid", pid); } catch (e) {}
+    joinUrl = (BASE_URL || location.href.split("#")[0].split("?")[0]) + "?r=" + pid;
+    renderHost();
+  });
+  peer.on("connection", c => {
+    const key = c.peer + c.connectionId;
+    c.on("open", () => { conns.set(key, c); renderHost(); });
+    c.on("data", d => {
+      if (!d || typeof d.pid !== "string" || d.pid.length > 40) return;
+      if (d.t === "hi") {
+        pids.set(key, d.pid);
+        const my = answers[q] ? answers[q][d.pid] : undefined;
+        c.send(Object.assign(stateMsg(), { my })); renderHost();
+      } else if (d.t === "ans" && Number.isInteger(d.q) && Number.isInteger(d.a) && d.q >= 0 && d.q < Q.length && d.a >= 0 && d.a < Q[d.q].o.length) {
+        const m = (answers[d.q] = answers[d.q] || {});
+        if (d.q === q && !rev && m[d.pid] === undefined) m[d.pid] = d.a; // 제출은 1회, 공개 전까지만
+        if (m[d.pid] !== undefined) c.send({ t: "ack", q: d.q, a: m[d.pid] });
+        else c.send(stateMsg());
+        renderHost();
+      }
+    });
+    const gone = () => { conns.delete(key); pids.delete(key); renderHost(); };
+    c.on("close", gone); c.on("error", gone);
+  });
+}
+
+function buildLobby() {
+  const bad = !/^https?:$/.test(location.protocol) || /^(localhost|127\.|192\.168\.|10\.)/.test(location.hostname) || window.self !== window.top;
+  app.innerHTML =
+    '<section id="landing-screen" aria-label="도전! 주식벨 시작 화면">' +
+    '<div class="hero"><p class="eyebrow">방구석월가의</p><h1 id="landing-title">도전! 주식벨</h1></div>' +
+    '<div class="ticker" id="ticker" role="region" aria-label="종목 등락률 티커(연출용)"><div class="ticker-track" id="ticker-track"></div></div>' +
+    '<div class="l-main"><div class="l-card">' +
+    '<div class="qr-box"><div id="qr-code" role="img" aria-label="참여 QR 코드"></div></div>' +
+    '<p id="qr-caption">QR을 찍고 도전! 주식벨에 참여하세요</p>' +
+    '<div class="pc"><span class="pc-label">현재 참여자</span><div class="pc-num" aria-live="polite"><span id="participant-count">0</span><span class="pc-unit">명</span></div></div>' +
+    (bad ? '<p class="warnbox">⚠ 이 주소는 핸드폰에서 열 수 없을 수 있어요. GitHub Pages 같은 https 인터넷 주소로 연 화면에서 QR을 사용하세요.</p>' : '') +
+    '<p class="small-url">' + esc(joinUrl) + '</p></div>' +
+    '<button class="btn" id="start-quiz-btn" type="button" onclick="setQ(0,false)">퀴즈 시작하기</button>' +
+    '<p class="l-note">※ 종목 등락률은 연출용 예시 데이터입니다</p></div></section>';
+  renderTicker(TICKER_DATA);
+  try {
+    const x = qrcode(0, "M"); x.addData(joinUrl); x.make();
+    const box = $("qr-code"); box.innerHTML = x.createSvgTag(6, 0);
+    const s = box.firstChild;
+    if (!s.getAttribute("viewBox")) s.setAttribute("viewBox", "0 0 " + parseFloat(s.getAttribute("width")) + " " + parseFloat(s.getAttribute("height")));
+    s.removeAttribute("width"); s.removeAttribute("height");
+  } catch (e) { $("qr-code").innerHTML = '<div class="qr-fallback">' + esc(joinUrl) + "</div>"; }
+}
+
+function hostHeader(label, cur) {
+  return '<header><div class="hrow"><span>' + label + '</span><span><b>' + cur + '</b> / ' + Q.length + '</span></div>' +
+    '<div class="track"><div class="fill" style="width:' + (cur / Q.length * 100) + '%"></div></div></header>';
+}
+
+function renderHost() {
+  if (!joinUrl) return;
+  const n = nConn();
+  if (q < 0) {
+    if (!$("landing-screen")) buildLobby();
+    setCount(n); return;
+  }
+  if (q >= Q.length) { renderResults(n); return; }
+  const Z = Q[q], { r, tot } = counts(q), mx = Math.max(1, ...r), ok = r[Z.a];
+  const live = new Set(pids.values()), m = answers[q] || {};
+  const subLive = Object.keys(m).filter(k => live.has(k)).length;
+  const pct = n ? Math.min(100, Math.round(subLive / n * 100)) : 0;
+  let body;
+  if (!rev) {
+    body = '<div class="subbox"><div class="subtxt">제출 <b>' + subLive + '</b> / 접속 ' + n + '명</div><div class="track"><div class="fill" style="width:' + pct + '%"></div></div></div>' +
+      Z.o.map((t, i) => '<div class="vrow plain"><div class="in"><span>' + (Z.ox ? "" : (i + 1) + ". ") + esc(t) + '</span></div></div>').join("");
+  } else {
+    const sum = tot
+      ? '<div class="sum">✅ 정답 <b>' + ok + '명</b> / 제출 ' + tot + '명 · 정답률 ' + Math.round(ok / tot * 100) + '% · 오답률 ' + Math.round((tot - ok) / tot * 100) + '%</div>'
+      : '<div class="sum">제출한 사람이 없어요</div>';
+    const exp = '<div class="fb ok"><h3>정답: ' + (Z.ox ? "" : (Z.a + 1) + ". ") + esc(Z.o[Z.a]) + '</h3><p>' + esc(Z.exp) + '</p></div>';
+    body = exp + sum + Z.o.map((t, i) => '<div class="vrow' + (i === Z.a ? " ok" : "") + '"><div class="bar" style="width:' + (r[i] / mx * 100) + '%"></div><div class="in"><span>' +
+      (Z.ox ? "" : (i + 1) + ". ") + esc(t) + (i === Z.a ? " ✔" : "") + '</span><b>' + r[i] + '명</b></div></div>').join("");
+  }
+  app.innerHTML =
+    '<div class="wrap host">' + hostHeader("도전! 주식벨 · 접속 " + n + "명 · 제출 " + subLive + "명", q + 1) +
+    '<main><div class="card"><span class="tag">' + (Z.ox ? "OX 문제 " : "문제 ") + (q + 1) + '</span><h1 class="q">' + esc(Z.q) + '</h1>' + body + '</div></main>' +
+    '<footer><div class="fbtns"><button class="btn ghost" onclick="setQ(' + (q - 1) + ',false)">◀ 이전</button>' +
+    '<button class="btn' + (rev ? " ghost" : "") + '" onclick="setQ(' + q + ',true)"' + (rev ? " disabled" : "") + '>' + (rev ? "정답 공개됨" : "정답 공개 (제출 " + subLive + "/" + n + ")") + '</button>' +
+    '<button class="btn' + (rev ? "" : " ghost") + '" onclick="setQ(' + (q + 1) + ',false)">' + (q === Q.length - 1 ? "결과 발표" : "다음 ▶") + '</button></div></footer></div>';
+}
+
+function renderResults(n) {
+  const st = Q.map((Z, i) => { const { r, tot } = counts(i), ok = r[Z.a]; return { i, tot, ok, w: tot ? Math.round((tot - ok) / tot * 100) : null }; });
+  const worst = st.filter(x => x.w !== null).sort((a, b) => b.w - a.w)[0];
+  app.innerHTML =
+    '<div class="wrap host">' + hostHeader("도전! 주식벨 · 접속 " + n + "명", Q.length) +
+    '<main><div class="card"><span class="tag">📊 결과 발표</span><h1 class="q">문제별 오답률</h1>' +
+    (worst ? '<p class="worstline">가장 많이 틀린 문제: <b>문제 ' + (worst.i + 1) + ' (' + worst.w + '%)</b></p>' : '') +
+    st.map(x => '<div class="rr' + (worst && x.i === worst.i ? " worst" : "") + '"><span class="no">' + (x.i + 1) + '</span><span class="rt">' + esc(Q[x.i].q) +
+      '</span><div class="rb"><i style="width:' + (x.w || 0) + '%"></i></div><span class="rv">' + (x.w === null ? "-" : x.w + "%") +
+      '<small>정답 ' + x.ok + ' / 응답 ' + x.tot + '</small></span></div>').join("") + '</div>' +
+    '<div class="card" style="margin-top:14px"><span class="tag">🎉 복습 완료 · 오늘의 핵심 개념</span><ul class="concepts">' +
+    Q.map(d => '<li><b>' + esc(d.concept[0]) + '</b>' + esc(d.concept[1]) + '</li>').join("") + '</ul></div></main>' +
+    '<footer><div class="fbtns one"><button class="btn ghost" onclick="setQ(' + (Q.length - 1) + ',true)">◀ 마지막 문제로</button></div></footer></div>';
+}
+
+/* ---------- 참가자 ---------- */
+let conn = null, retry = null, lastErr = "", t0 = Date.now(), pid = null;
+try { pid = localStorage.getItem("sbp"); } catch (e) {}
+if (!pid) { pid = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); try { localStorage.setItem("sbp", pid); } catch (e) {} }
+
+function again(peer) {
+  if (retry) return;
+  try { peer.destroy(); } catch (e) {}
+  linked = false; renderPlayer();
+  retry = setTimeout(() => { retry = null; connect(); }, 2500);
+}
+function connect() {
+  const peer = new Peer();
+  peer.on("open", () => {
+    conn = peer.connect(hostId, { reliable: true });
+    conn.on("open", () => { linked = true; lastErr = ""; conn.send({ t: "hi", pid }); renderPlayer(); });
+    conn.on("data", d => {
+      if (!d) return;
+      if (d.t === "state") {
+        q = d.q; rev = !!d.rev; stat = d.st || null;
+        if (d.my !== undefined && d.q >= 0) { mine[d.q] = d.my; sel[d.q] = d.my; }
+        renderPlayer();
+      } else if (d.t === "ack") { mine[d.q] = d.a; sel[d.q] = d.a; delete pending[d.q]; renderPlayer(); }
+    });
+    conn.on("close", () => again(peer)); conn.on("error", () => again(peer));
+  });
+  peer.on("error", e => { lastErr = e.type || "error"; again(peer); });
+}
+function pick(i) {
+  if (!linked || q < 0 || q >= Q.length || rev || mine[q] !== undefined) return;
+  sel[q] = i; renderPlayer();
+}
+function submit() {
+  if (!linked || q < 0 || q >= Q.length || rev || mine[q] !== undefined || sel[q] === undefined || pending[q]) return;
+  pending[q] = true; conn.send({ t: "ans", pid, q, a: sel[q] }); renderPlayer();
+}
+window.pick = pick; window.submit = submit;
+
+function pHead(cur) {
+  return '<header><div class="hrow"><span>도전! 주식벨</span><span><b>' + cur + '</b> / ' + Q.length + '</span></div>' +
+    '<div class="track"><div class="fill" style="width:' + (cur / Q.length * 100) + '%"></div></div></header>';
+}
+function msgCard(title, body) {
+  app.innerHTML = '<div class="wrap"><main style="padding-top:calc(env(safe-area-inset-top,0px) + 40px)"><div class="card done"><div class="emoji">🔔</div><h1>' + title + '</h1><p class="sub">' + body + '</p></div></main></div>';
+}
+function renderPlayer() {
+  if (!linked) {
+    const slow = Date.now() - t0 > 8000;
+    const hint = lastErr === "peer-unavailable" ? "진행자 화면을 찾을 수 없어요.<br>진행자 화면의 QR을 다시 찍어주세요."
+      : (slow ? "연결이 오래 걸려요.<br>와이파이 ↔ LTE로 바꿔서 시도하거나 새로고침 해보세요." : "");
+    msgCard("연결 중…", hint + (lastErr ? '<br><small>' + esc(lastErr) + '</small>' : ""));
+    return;
+  }
+  if (q < 0) { msgCard("접속 완료!", "곧 시작합니다 😊"); return; }
+  if (q >= Q.length) {
+    app.innerHTML = '<div class="wrap"><main style="padding-top:calc(env(safe-area-inset-top,0px) + 24px)"><div class="card done"><div class="emoji">🎉</div><h1>복습 완료!</h1>' +
+      '<p class="sub">오늘 배운 핵심 개념을 한 번 더 확인해요</p><ul class="concepts">' +
+      Q.map(d => '<li><b>' + esc(d.concept[0]) + '</b>' + esc(d.concept[1]) + '</li>').join("") + '</ul></div></main></div>';
+    return;
+  }
+  const Z = Q[q], m = mine[q], c = sel[q], done = m !== undefined;
+  const n = i => Z.ox ? "" : '<span class="n">' + (i + 1) + '</span>';
+  let opts, foot = "", top = "";
+  if (rev) {
+    opts = Z.o.map((t, i) => '<button class="opt' + (Z.ox ? " ox" : "") + (i === Z.a ? " ok" : (i === m ? " bad" : "")) + '" disabled>' + n(i) +
+      '<span>' + esc(t) + (i === Z.a ? " ✔" : "") + (i === m && i !== Z.a ? " (내 선택)" : "") + '</span></button>').join("");
+    const right = m === Z.a;
+    top = '<div class="fb ' + (right ? "ok" : "bad") + '"><h3>' + (m === undefined ? "제출하지 못했어요" : (right ? "🎯 정답이에요!" : "아쉬워요, 오답이에요")) + '</h3><p>' + esc(Z.exp) + '</p></div>';
+    foot = (stat && stat.tot ? '<p class="hint">정답자 ' + stat.ok + '명 / 제출 ' + stat.tot + '명 (' + Math.round(stat.ok / stat.tot * 100) + '%)</p>' : "");
+  } else {
+    opts = Z.o.map((t, i) => '<button class="opt' + (Z.ox ? " ox" : "") + (c === i ? " sel" : "") + '"' + (done ? " disabled" : "") + ' onclick="pick(' + i + ')">' + n(i) + '<span>' + esc(t) + '</span></button>').join("");
+    if (done) foot = '<p class="hint">✅ 제출 완료! 정답 공개를 기다려주세요</p>';
+  }
+  const showBtn = !rev && !done;
+  app.innerHTML = '<div class="wrap">' + pHead(q + (done || rev ? 1 : 0)) +
+    '<main><div class="card"><span class="tag">' + (Z.ox ? "OX 문제 " : "문제 ") + (q + 1) + '</span><h1 class="q">' + esc(Z.q) + '</h1>' + top +
+    '<div class="opts' + (Z.ox ? " oxrow" : "") + '">' + opts + '</div>' + foot + '</div></main>' +
+    (showBtn ? '<footer><button class="btn" id="submit-btn" onclick="submit()"' + (c === undefined || pending[q] ? " disabled" : "") + '>' + (pending[q] ? "제출 중…" : (c === undefined ? "보기를 선택하세요" : "정답 제출")) + '</button></footer>' : "") + '</div>';
+}
+
+window.StockBell = { setParticipantCount: setCount, updateTicker: renderTicker };
+if (isHost) startHost();
+else { renderPlayer(); connect(); setInterval(() => { if (!linked) renderPlayer(); }, 2000); }
+
+</script>
+</body>
+</html>
