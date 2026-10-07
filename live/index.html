@@ -241,8 +241,16 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const params = new URLSearchParams(location.search);
 let sessionId = params.get("s");
-let hostToken = params.get("host");
-const isHost = !!hostToken || !sessionId;
+let hostToken = null;
+const isParticipant = !!sessionId;
+const isHost = !isParticipant;
+
+if (isHost) {
+  try {
+    sessionId = sessionStorage.getItem("stockbell_session_id");
+    hostToken = sessionStorage.getItem("stockbell_host_token");
+  } catch(e) {}
+}
 
 let q = -1, rev = false, status = "lobby", joinUrl = "";
 let participants = [], answerRows = [], mine = {}, sel = {}, pending = {}, stat = null;
@@ -352,11 +360,28 @@ async function createHostSession(){
   const row = Array.isArray(data) ? data[0] : data;
   sessionId = row.session_id;
   hostToken = row.host_token;
-  history.replaceState(null, "", baseUrl() + "?s=" + encodeURIComponent(sessionId) + "&host=" + encodeURIComponent(hostToken));
+  try {
+    sessionStorage.setItem("stockbell_session_id", sessionId);
+    sessionStorage.setItem("stockbell_host_token", hostToken);
+  } catch(e) {}
+  history.replaceState(null, "", baseUrl());
 }
 async function startHost(){
   try {
-    if (!sessionId || !hostToken) await createHostSession();
+    history.replaceState(null, "", baseUrl());
+    if (!sessionId || !hostToken) {
+      await createHostSession();
+    } else {
+      const {data: chk} = await sb.from("quiz_sessions").select("id").eq("id", sessionId).maybeSingle();
+      if (!chk) {
+        try {
+          sessionStorage.removeItem("stockbell_session_id");
+          sessionStorage.removeItem("stockbell_host_token");
+        } catch(e) {}
+        sessionId = null; hostToken = null;
+        await createHostSession();
+      }
+    }
     joinUrl = baseUrl() + "?s=" + encodeURIComponent(sessionId);
     await loadSession();
     await loadHostData();
@@ -523,7 +548,11 @@ function newGame(){
   if (realtimeChannel) { try { sb.removeChannel(realtimeChannel); } catch(e) {} }
   if (heartbeatTimer) clearInterval(heartbeatTimer);
   if (refreshTimer) clearInterval(refreshTimer);
-  location.href = baseUrl();
+  try {
+    sessionStorage.removeItem("stockbell_session_id");
+    sessionStorage.removeItem("stockbell_host_token");
+  } catch(e) {}
+  location.replace(baseUrl());
 }
 window.newGame = newGame;
 
