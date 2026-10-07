@@ -449,7 +449,7 @@ function renderResults(n){
       '<small>정답 ' + x.ok + ' / 응답 ' + x.tot + '</small></span></div>').join("") + '</div>' +
     '<div class="card" style="margin-top:14px"><span class="tag">🎉 복습 완료 · 오늘의 핵심 개념</span><ul class="concepts">' +
     Q.map(d => '<li><b>' + esc(d.concept[0]) + '</b>' + esc(d.concept[1]) + '</li>').join("") + '</ul></div></main>' +
-    '<footer><div class="fbtns one"><button class="btn ghost" onclick="setQ(' + (Q.length-1) + ',true)">◀ 마지막 문제로</button></div></footer></div>';
+    '<footer><div class="fbtns" style="grid-template-columns:1fr 1.4fr"><button class="btn ghost" onclick="setQ(' + (Q.length-1) + ',true)">◀ 마지막 문제로</button><button class="btn" onclick="newGame()">🔄 새 게임 시작하기</button></div><p class="l-note">새로운 게임방과 QR이 생성됩니다.</p></footer></div>';
 }
 
 async function startPlayer(){
@@ -517,6 +517,15 @@ function renderPlayer(){
     '<div class="opts' + (Z.ox?" oxrow":"") + '">' + opts + '</div>' + foot + '</div></main>' +
     (showBtn ? '<footer><button class="btn" id="submit-btn" onclick="submit()"' + (c===undefined||pending[q]?" disabled":"") + '>' + (pending[q]?"제출 중…":(c===undefined?"보기를 선택하세요":"정답 제출")) + '</button></footer>' : "") + '</div>';
 }
+
+
+function newGame(){
+  if (realtimeChannel) { try { sb.removeChannel(realtimeChannel); } catch(e) {} }
+  if (heartbeatTimer) clearInterval(heartbeatTimer);
+  if (refreshTimer) clearInterval(refreshTimer);
+  location.href = baseUrl();
+}
+window.newGame = newGame;
 
 window.StockBell = {setParticipantCount:setCount, updateTicker:renderTicker};
 
