@@ -46,23 +46,26 @@ nav{position:fixed;bottom:0;left:0;right:0;background:#0b1527;border-top:1px sol
 nav button{background:none;border:0;min-height:60px;color:var(--mu);font-size:12px;cursor:pointer;line-height:1.25}nav button b{display:block;font-size:15px}nav button.on{color:var(--ac);box-shadow:inset 0 2px 0 var(--ac)}
 #ts{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom));background:var(--ac);color:#1a1405;border-radius:12px;padding:10px 14px;font-weight:600;font-size:14px;z-index:9;display:none}
 .emp{text-align:center;color:var(--mu);padding:30px 10px}
-.hero h1{font-size:clamp(28px,4.6vw,56px);line-height:1.15;margin:8px 0 6px;letter-spacing:-1px}.hero .sub{font-size:clamp(17px,2.4vw,28px);color:var(--ac);margin:0 0 18px;font-weight:600}
+.hero h1{font-size:clamp(28px,3.8vw,48px);line-height:1.15;margin:0 0 6px;letter-spacing:-1px}.hero .sub{font-size:clamp(17px,2.4vw,28px);color:var(--ac);margin:0 0 18px;font-weight:600}
 .hg{display:grid;gap:14px}.hm{font-size:clamp(15px,1.6vw,22px);word-break:keep-all}.hm h2{font-size:clamp(18px,2vw,26px);color:var(--ac)}.hm li{margin:8px 0}
 .stp{display:grid;grid-template-columns:36px 1fr;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--ln)}.stp:first-of-type{border-top:0}.stp i{width:36px;height:36px;border-radius:50%;background:var(--ac);color:#1a1405;font-style:normal;font-weight:800;display:grid;place-items:center}.stp b{display:block;font-size:clamp(15px,1.7vw,22px)}.stp span{display:block;margin-top:2px;color:var(--mu);font-size:clamp(13px,1.3vw,17px)}
 .cta{max-width:520px;display:block;margin:20px auto 0;font-size:19px;min-height:60px}
-.top{display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap}.qrc{text-align:center;margin:0 0 6px}.qrc b{display:block;font-size:clamp(14px,1.5vw,20px);margin-bottom:8px}.qrb{background:#fff;padding:12px;border-radius:14px;display:inline-block;line-height:0}.qrb .mu{color:#444;line-height:1.4;width:196px;padding:30px 0}
+.top{display:flex;gap:24px;align-items:stretch;justify-content:space-between;flex-wrap:wrap}.tl{flex:1 1 420px;min-width:0}.tl .capb{margin:14px 0 0;max-width:560px;text-align:left}.tl .cta{margin:12px 0 0;max-width:560px}.qrc{text-align:center;margin:0 0 6px;display:flex;flex-direction:column;justify-content:center;align-items:center}.qrc b{display:block;font-size:clamp(14px,1.5vw,20px);margin-bottom:8px}.qrb{background:#fff;padding:12px;border-radius:14px;display:inline-block;line-height:0}.qrb .mu{color:#444;line-height:1.4;width:196px;padding:30px 0}
 @media(max-width:699px){.qrc{display:none}.hero h1{font-size:5.2vw;white-space:nowrap}.hero .sub{font-size:4vw}}
-body[data-t=h] main{max-width:1180px;word-break:keep-all}body[data-t=h] header .in{max-width:1180px}body[data-t=h] .bud,body[data-t=h] .pg,body[data-t=h] nav{display:none}
+body[data-t=h] main{max-width:1180px;word-break:keep-all}body[data-t=h] header .in{max-width:1180px}
+.capb{max-width:520px;margin:16px auto 0;text-align:center}.capb b{font-size:clamp(16px,1.8vw,22px)}.capi{display:flex;align-items:center;gap:8px;margin-top:10px}.capi span{font-size:24px;font-weight:700;color:var(--ac)}.capi input{font-size:22px;font-weight:700;text-align:right}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.chips button{min-height:44px;border:1px solid var(--ln);background:var(--p2);border-radius:10px;cursor:pointer;font-weight:600;font-size:14px}.chips button.on{border-color:var(--ac);color:var(--ac)}body[data-t=h] .bud,body[data-t=h] .pg,body[data-t=h] nav{display:none}
 @media(min-width:900px){.hg{grid-template-columns:1fr 1.25fr}.hm .box{padding:22px 26px}}
 @media(min-width:700px){.mt-g{grid-template-columns:repeat(4,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(min-width:900px){.cr{display:grid;grid-template-columns:1fr 190px;gap:12px;align-items:start}.tl .cr .capb{max-width:none;min-height:190px;display:flex;flex-direction:column;justify-content:center}.tl .cr .cta{max-width:none;width:190px;height:190px;margin:14px 0 0;padding:12px;font-size:20px;line-height:1.35;border-radius:16px}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async onload="window.qr&&qr()"></script>
 </head>
 <body>
 <header><div class="in">
  <div class="br" onclick="go('h')" style="cursor:pointer"><b>방구석월가</b><span>미국주식 결을 읽다</span></div>
- <div class="bud"><div><i>초기 투자금</i><b>$100,000</b></div><div><i>현재 투자금</i><b id="hi">$0</b></div><div><i>남은 현금</i><b id="hc" class="ac">$100,000</b></div></div>
+ <div class="bud"><div><i>초기 투자금</i><b id="hcap">$100,000</b></div><div><i>현재 투자금</i><b id="hi">$0</b></div><div><i>남은 현금</i><b id="hc" class="ac">$100,000</b></div></div>
  <div class="pg"><u id="hp"></u></div>
 </div></header>
 <main id="v"></main>
@@ -76,38 +79,41 @@ body[data-t=h] main{max-width:1180px;word-break:keep-all}body[data-t=h] header .
  CSV 열: 기업명(종목), 티커, 현재 주가, 배당금(연간), 배당지급(월), 5년 배당성장률, 배당지급(연속년수), Payout Ratio, 비고, [섹터], [5년 주가 CAGR]
  섹터·5년 주가 CAGR 열은 선택입니다(없으면 섹터는 아래 SEC 표, 주가 CAGR은 '-'). 헤더에 "업데이트 날짜 YYYY.MM.DD"가 있으면 기준일로 표시합니다.
  RAW 열 순서: [종목, 티커, 섹터, 주가, 연간배당, 배당CAGR, 주가CAGR, 지급월, 연속년수, Payout, 비고] */
-let ASOF="2026.09.30 업데이트";
+let ASOF="2026.10.08 업데이트";
 /* 5년 주가 CAGR 근사치(약 2021.9 → 기준일 주가 기준 개략 추정, 실제와 다를 수 있음). 시트/CSV에 주가 CAGR 열이 있으면 그 값이 우선합니다. */
-const PCA={"KO": 10.5, "PG": 0.5, "PEP": -3.5, "HSY": -1.0, "JNJ": 10.0, "PFE": -8.0, "O": -5.5, "MAIN": 6.5, "SBUX": -2.5, "NKE": -25.0, "MCD": -1.0, "V": 10.0, "JPM": 15.5, "C": 12.5, "WFC": 11.5, "BAC": 5.0, "UNP": 7.0, "LMT": 8.0, "CSCO": 15.0, "OKE": 6.0, "MDLZ": 0.0, "UNH": -1.5, "MET": 9.0, "CVX": 15.5, "XOM": 23.0, "MO": 5.5};
+const PCA={"KO": 9.0, "PG": 0.5, "PEP": -4.5, "HSY": -1.5, "JNJ": 9.5, "PFE": -10.0, "O": -5.5, "MAIN": 4.5, "SBUX": -3.0, "NKE": -27.0, "MCD": -1.0, "V": 11.0, "JPM": 14.5, "C": 12.5, "WFC": 10.5, "BAC": 3.0, "UNP": 5.0, "LMT": 8.5, "CSCO": 16.0, "OKE": 6.0, "MDLZ": -0.5, "UNH": -2.0, "MET": 9.0, "CVX": 14.0, "XOM": 21.5, "MO": 9.5, "OHI": 3.5, "WELL": 21.5, "ABBV": 19.5};
 let SHARE_URL='';/* QR에 넣을 주소를 고정하려면 입력(비우면 현재 접속 주소 자동 사용) */
-const SEC={"KO": "필수소비재", "PG": "필수소비재", "PEP": "필수소비재", "HSY": "필수소비재", "MDLZ": "필수소비재", "MO": "필수소비재", "JNJ": "헬스케어", "PFE": "헬스케어", "UNH": "헬스케어", "O": "부동산(리츠)", "MAIN": "금융", "V": "금융", "JPM": "금융", "C": "금융", "WFC": "금융", "BAC": "금융", "MET": "금융", "SBUX": "경기소비재", "NKE": "경기소비재", "MCD": "경기소비재", "UNP": "산업재", "LMT": "산업재", "CSCO": "IT", "OKE": "에너지", "CVX": "에너지", "XOM": "에너지"};
+const SEC={"KO": "필수소비재", "PG": "필수소비재", "PEP": "필수소비재", "HSY": "필수소비재", "MDLZ": "필수소비재", "MO": "필수소비재", "JNJ": "헬스케어", "PFE": "헬스케어", "UNH": "헬스케어", "O": "부동산(리츠)", "MAIN": "금융", "V": "금융", "JPM": "금융", "C": "금융", "WFC": "금융", "BAC": "금융", "MET": "금융", "SBUX": "임의소비재", "NKE": "임의소비재", "MCD": "임의소비재", "UNP": "산업재", "LMT": "산업재", "CSCO": "IT", "OKE": "에너지", "CVX": "에너지", "XOM": "에너지", "OHI": "부동산(리츠)", "WELL": "부동산(리츠)", "ABBV": "헬스케어"};
 const RAW=[
-["코카콜라", "KO", "필수소비재", 86.1, 2.12, 4.61, null, "4,7,10,12", 63.0, 77.24, ""],
-["피앤지", "PG", "필수소비재", 143.95, 4.35, 6.0, null, "2,5,8,11", 69.0, 63.77, ""],
-["펩시콜라", "PEP", "필수소비재", 125.6, 5.92, 6.77, null, "1,3,6,9", 54.0, 74.72, "주가 우하향중..."],
-["허쉬초코렛", "HSY", "필수소비재", 159.3, 5.81, 11.91, null, "3,6,9,12", 63.0, 75.0, ""],
-["존슨앤존스", "JNJ", "헬스케어", 258.66, 5.36, 5.08, null, "3,6,9,12", 64.0, 59.99, ""],
-["화이자", "PFE", "헬스케어", 28.12, 1.72, 2.24, null, "3,6,9,12", 15.0, 56.39, ""],
-["리얼티인컴", "O", "부동산(리츠)", 53.53, 3.26, 2.84, null, "1,2,3,4,5,6,7,8,9,10,11,12", 31.0, 75.3, ""],
-["메인스트리트", "MAIN", "금융", 55.66, 3.18, 4.67, null, "1,2,3,4,5,6,7,8,9,10,11,12", 17.0, 79.0, ""],
-["스타벅스", "SBUX", "경기소비재", 94.88, 2.48, 6.62, null, "2,5,8,11", 15.0, 102.06, ""],
-["나이키", "NKE", "경기소비재", 35.15, 1.64, 8.78, null, "1,4,7,10", 24.0, 103.82, "주가 우하향중..."],
-["맥도널드", "MCD", "경기소비재", 231.83, 7.44, 7.5, null, "3,6,9,12", 48.0, 59.45, "주가 우하향중..."],
-["비자", "V", "금융", 359.85, 2.68, 15.93, null, "3,6,9,12", 18.0, 22.12, ""],
-["제이피모건", "JPM", "금융", 333.18, 6.6, 10.0, null, "1,4,7,10", 15.0, 26.6, ""],
-["시티은행", "C", "금융", 127.0, 2.68, 3.0, null, "2,5,8,11", 30.0, 30.0, "최근 10년동안 배당 성장중"],
-["웰스파고", "WFC", "금융", 80.25, 2.0, 30.0, null, "3,6,9,12", 20.0, 29.0, "배당성장은 4년연속중"],
-["뱅크오브아메리카", "BAC", "금융", 53.73, 1.28, 9.24, null, "3,6,9,12", 12.0, 29.0, ""],
-["유니온퍼시픽", "UNP", "산업재", 272.42, 5.68, 6.76, null, "3,6,9,12", 19.0, 44.95, ""],
-["록히트마틴", "LMT", "산업재", 505.5, 13.8, 6.0, null, "3,6,9,12", 23.0, 50.0, ""],
-["시스코", "CSCO", "IT", 108.76, 1.68, 2.6, null, "1,4,7,10", 16.0, 49.39, ""],
-["원오크", "OKE", "에너지", 87.16, 4.28, 2.54, null, "2,5,8,11", 3.0, 72.32, ""],
-["몬델레즈", "MDLZ", "필수소비재", 57.76, 2.08, 9.68, null, "1,4,7,10", 12.0, 72.27, ""],
-["유나이티드헬스", "UNH", "헬스케어", 365.2, 9.28, 11.47, null, "3,6,9,12", 34.0, 57.33, ""],
-["매트라이프", "MET", "금융", 94.35, 2.37, 4.29, null, "3,6,9,12", 13.0, 46.36, ""],
-["쉐브론", "CVX", "에너지", 207.1, 7.12, 6.0, null, "3,6,9,12", 56.0, 67.33, ""],
-["엑슨모빌", "XOM", "에너지", 163.82, 4.12, 3.23, null, "3,6,9,12", 43.0, 52.63, ""],
-["알트리아", "MO", "필수소비재", 66.95, 4.44, 4.27, null, "1,4,7,10", 56.0, 88.57, ""]
+["코카콜라", "KO", "필수소비재", 85.82, 2.12, 4.61, 9.0, "4,7,10,12", 63.0, 77.24, ""],
+["피앤지", "PG", "필수소비재", 147.82, 4.35, 6.0, 0.5, "2,5,8,11", 69.0, 63.77, ""],
+["펩시콜라", "PEP", "필수소비재", 123.73, 5.92, 6.77, -4.5, "1,3,6,9", 54.0, 74.72, "주가 우하향중..."],
+["허쉬초코렛", "HSY", "필수소비재", 160.34, 5.81, 11.91, -1.5, "3,6,9,12", 63.0, 75.0, ""],
+["존슨앤존스", "JNJ", "헬스케어", 258.45, 5.36, 5.08, 9.5, "3,6,9,12", 64.0, 59.99, ""],
+["화이자", "PFE", "헬스케어", 28.0, 1.72, 2.24, -10.0, "3,6,9,12", 15.0, 56.39, ""],
+["리얼티인컴", "O", "부동산(리츠)", 53.35, 3.26, 2.84, -5.5, "1,2,3,4,5,6,7,8,9,10,11,12", 31.0, 75.3, ""],
+["메인스트리트", "MAIN", "금융", 54.18, 3.18, 4.67, 4.5, "1,2,3,4,5,6,7,8,9,10,11,12", 17.0, 79.0, ""],
+["스타벅스", "SBUX", "임의소비재", 93.58, 2.48, 6.62, -3.0, "2,5,8,11", 15.0, 102.06, ""],
+["나이키", "NKE", "임의소비재", 34.36, 1.64, 8.78, -27.0, "1,4,7,10", 24.0, 103.82, "주가 우하향중..."],
+["맥도널드", "MCD", "임의소비재", 230.88, 7.44, 7.5, -1.0, "3,6,9,12", 48.0, 59.45, "주가 우하향중..."],
+["비자", "V", "금융", 372.1, 2.68, 15.93, 11.0, "3,6,9,12", 18.0, 22.12, ""],
+["제이피모건", "JPM", "금융", 329.58, 6.6, 10.0, 14.5, "1,4,7,10", 15.0, 26.6, ""],
+["시티은행", "C", "금융", 127.32, 2.68, 3.0, 12.5, "2,5,8,11", 30.0, 30.0, "최근 10년동안 배당 성장중"],
+["웰스파고", "WFC", "금융", 80.26, 2.0, 30.0, 10.5, "3,6,9,12", 20.0, 29.0, "배당성장은 4년연속중"],
+["뱅크오브아메리카", "BAC", "금융", 53.52, 1.28, 9.24, 3.0, "3,6,9,12", 12.0, 29.0, ""],
+["유니온퍼시픽", "UNP", "산업재", 274.68, 5.68, 6.76, 5.0, "3,6,9,12", 19.0, 44.95, ""],
+["록히트마틴", "LMT", "산업재", 499.22, 13.8, 6.0, 8.5, "3,6,9,12", 23.0, 50.0, ""],
+["시스코", "CSCO", "IT", 117.39, 1.68, 2.6, 16.0, "1,4,7,10", 16.0, 49.39, ""],
+["원오크", "OKE", "에너지", 88.05, 4.28, 2.54, 6.0, "2,5,8,11", 3.0, 72.32, ""],
+["몬델레즈", "MDLZ", "필수소비재", 59.38, 2.08, 9.68, -0.5, "1,4,7,10", 12.0, 72.27, ""],
+["유나이티드헬스", "UNH", "헬스케어", 375.98, 9.28, 11.47, -2.0, "3,6,9,12", 34.0, 57.33, ""],
+["매트라이프", "MET", "금융", 95.78, 2.37, 4.29, 9.0, "3,6,9,12", 13.0, 46.36, ""],
+["쉐브론", "CVX", "에너지", 205.15, 7.12, 6.0, 14.0, "3,6,9,12", 56.0, 67.33, ""],
+["엑슨모빌", "XOM", "에너지", 164.05, 4.12, 3.23, 21.5, "3,6,9,12", 43.0, 52.63, ""],
+["알트리아", "MO", "필수소비재", 69.38, 4.44, 4.27, 9.5, "1,4,7,10", 56.0, 88.57, ""],
+["오메가헬스케어", "OHI", "부동산(리츠)", 43.75, 2.72, 0.07, 3.5, "2,5,8,11", 24.0, 92.0, ""],
+["웰타워", "WELL", "부동산(리츠)", 221.12, 3.4, 4.7, 21.5, "2,5,8,11", 51.0, 132.0, ""],
+["에브비", "ABBV", "헬스케어", 271.36, 6.92, 6.1, 19.5, "2,5,8,11", 14.0, 189.0, ""]
 ];
 const row=r=>{const hp=!(r[6]==null||r[6]===''||isNaN(+r[6]));let m=String(r[7]).split(/\D+/).filter(Boolean).map(Number).filter(x=>x>=1&&x<=12);if(!m.length&&/월\s*배당|monthly/i.test(r[7]))m=[1,2,3,4,5,6,7,8,9,10,11,12];
  return{n:r[0],t:r[1],s:r[2]||SEC[r[1]]||'기타',p:+r[3],d:+r[4],dc:+r[5],pc:hp?+r[6]:(PCA[r[1]]!=null?PCA[r[1]]:null),pe:!hp&&PCA[r[1]]!=null,m,y:+r[8],po:+r[9],nt:r[10]||''}};
@@ -119,16 +125,16 @@ function parseCSV(t){
  let mi=ix('배당지급월');if(mi<0)mi=ix('배당지급');let yi=ix('연속');if(yi<0){const l=h.lastIndexOf('배당지급');yi=l!=mi?l:-1}
  const I=[ix('종목','기업명'),ix('티커'),ix('섹터'),ix('현재주가'),ix('연간배당','배당금'),ix('배당cagr','배당성장률'),ix('주가cagr'),mi,yi,ix('payout'),ix('비고')];
  const n=v=>parseFloat(String(v).replace(/[$%,]/g,''))||0,g=i=>i<0?'':rows_r[i];let rows_r;
- return rows.map(r=>{rows_r=r;return row([g(I[0]),g(I[1]),g(I[2]),n(g(I[3])),n(g(I[4])),n(g(I[5])),g(I[6])===''?null:n(g(I[6])),g(I[7]),n(g(I[8])),n(g(I[9])),g(I[10])])}).filter(s=>s.t&&s.p>0);
+ return rows.map(r=>{rows_r=r;return row([g(I[0]),g(I[1]),g(I[2]),n(g(I[3])),n(g(I[4])),n(g(I[5])),g(I[6])===''?null:n(g(I[6])),g(I[7]),n(g(I[8])),n(g(I[9])),g(I[10])])}).filter((s,i,a)=>s.t&&s.p>0&&a.findIndex(x=>x.t==s.t)==i);
 }
 
 /* ===== 상태·유틸 ===== */
-const CAP=100000,MIN=5,$=s=>document.querySelector(s);
+const MAXCAP=100000,MIN=5,$=s=>document.querySelector(s);let CAP=MAXCAP;
 const f0=n=>'$'+Math.round(n).toLocaleString('en-US'),f2=n=>'$'+n.toFixed(2),f1=n=>n.toFixed(1)+'%';
 const fk=n=>n>=1000?'$'+(n/1000).toFixed(n>=1e4?0:1)+'k':'$'+Math.round(n);
 const yl=s=>s.d/s.p*100,fs=n=>(n>0?'+':'')+f1(n);
 let pf={},tab='h',tm=0,F={q:'',sec:'',mo:'',y:'',yd:'',dc:'',pc:'',po:'',so:'yd'};
-try{pf=JSON.parse(localStorage.getItem('bw_pf')||'{}')}catch(e){}
+try{pf=JSON.parse(localStorage.getItem('bw_pf')||'{}');CAP=Math.min(MAXCAP,Math.max(1000,+localStorage.getItem('bw_cap')||MAXCAP))}catch(e){}
 const sv=()=>{try{localStorage.setItem('bw_pf',JSON.stringify(pf))}catch(e){}};
 function tot(){const h=STOCKS.filter(s=>s.t in pf).map(s=>{const amt=pf[s.t],sh=Math.floor(amt/s.p);return{...s,amt,sh,cost:sh*s.p,div:sh*s.d}});const inv=h.reduce((a,x)=>a+x.cost,0);return{h,inv,cash:CAP-inv}}
 function mon(h){const a=Array(12).fill(0);h.forEach(x=>x.m.forEach(m=>a[m-1]+=x.div/(x.m.length||1)));return a}
@@ -140,26 +146,32 @@ const live=h=>h.filter(x=>x.sh>0);
 
 /* ===== 동작 ===== */
 function sa(t,v){v=Math.max(0,parseInt(String(v).replace(/\D/g,''))||0);const other=tot().h.filter(x=>x.t!=t).reduce((a,x)=>a+x.cost,0),mx=CAP-other;
- if(v>mx){v=mx;toast('총 투자금은 $100,000을 넘을 수 없어 '+f0(mx)+'로 조정했어요')}pf[t]=v;sv();render()}
+ if(v>mx){v=mx;toast('총 투자금은 '+f0(CAP)+'을 넘을 수 없어 '+f0(mx)+'로 조정했어요')}pf[t]=v;sv();render()}
 const st=(t,d)=>sa(t,(pf[t]||0)+d);
 function rm(t){delete pf[t];sv();render()}
-function tg(t){if(t in pf)return rm(t);const s=STOCKS.find(x=>x.t==t),c=tot().cash;if(c<s.p)return toast('남은 현금이 부족해요');pf[t]=Math.min(10000,c);sv();render();toast(s.t+' 담음 · 구성 탭에서 금액을 조정하세요')}
+function tg(t){if(t in pf)return rm(t);const s=STOCKS.find(x=>x.t==t),c=tot().cash;if(c<s.p)return toast('남은 현금이 부족해요');pf[t]=Math.min(Math.max(Math.round(CAP/1000)*100,100),c);sv();render();toast(s.t+' 담음 · 구성 탭에서 금액을 조정하세요')}
 function go(t){tab=t;document.body.dataset.t=t;V[t]();window.scrollTo(0,0);nv()}
 function render(){hd();nv();if(tab=='x'&&$('#L'))list();else V[tab]()}
-function hd(){const{inv,cash}=tot();$('#hi').textContent=f0(inv);$('#hc').textContent=f0(cash);$('#hp').style.width=inv/CAP*100+'%'}
+function hd(){const{inv,cash}=tot();$('#hcap').textContent=f0(CAP);$('#hi').textContent=f0(inv);$('#hc').textContent=f0(cash);$('#hp').style.width=inv/CAP*100+'%'}
 function nv(){const n=live(tot().h).length;$('#nv').innerHTML=[['x','1','탐색'],['p','2','구성'+(n?' '+n:'')],['c','3','캘린더'],['a','4','분석'],['t','5','타임머신']].map(a=>`<button class="${tab==a[0]?'on':''}" onclick="go('${a[0]}')"><b>${a[1]}</b>${a[2]}</button>`).join('')}
 
 /* ===== 시작 화면(사용 설명서) ===== */
 function vh(){
  const st=[['종목 탐색','배당률·성장률·Payout·연속지급·지급월·섹터를 검색·필터로 비교'],['포트폴리오 구성','종목별 투자금을 넣으면 매수 수량과 남은 현금이 자동 계산'],['배당금 캘린더','1~12월 월별 예상 배당금을 한눈에 확인'],['포트폴리오 분석','섹터 비중·지급월 분포·가중 평균 지표 확인'],['배당 타임머신','최근 5년 CAGR이 유지된다고 가정해 5년 뒤를 시뮬레이션']];
- $('#v').innerHTML=`<div class="top"><section class="hero"><h1>$100,000 배당 포트폴리오 챌린지</h1><p class="sub">나만의 배당금 캘린더 만들기</p></section><div class="box qrc"><b>스마트폰으로 접속하세요</b><div class="qrb"><div id="qr"></div></div><div class="mu" id="qu" style="margin-top:8px;word-break:break-all;max-width:260px"></div></div></div>
- <div class="hg hm"><div class="box mis"><h2>MISSION</h2><p style="margin:0">당신에게 $100,000이 주어졌습니다.<br>미국 배당주를 이용해 나만의 배당 포트폴리오를 만들어보세요.</p>
- <ol style="padding-left:22px"><li>총 투자금은 $100,000을 초과할 수 없습니다.</li><li>최소 5개 종목 이상을 선택하세요.</li><li>가능한 한 12개월 모두 배당금을 받을 수 있도록 구성해보세요.</li><li>배당률만 보지 말고 배당성장률, Payout Ratio, 배당연속지급년수도 함께 고려해보세요.</li></ol></div>
+ $('#v').innerHTML=`<div class="top"><div class="tl"><section class="hero"><h1>$100,000 배당 포트폴리오 챌린지</h1><p class="sub">나만의 배당금 캘린더 만들기</p></section>
+ <div class="cr"><div class="box capb"><b>시작 투자금 설정</b><div class="mu">최대 $100,000까지, 그 이하로 직접 정할 수 있어요</div><div class="capi"><span>$</span><input id="cp" inputmode="numeric" value="${CAP.toLocaleString('en-US')}" onchange="setCap(this.value)" aria-label="시작 투자금"></div><div class="chips">${[10000,30000,50000,100000].map(v=>`<button data-v="${v}" class="${v==CAP?'on':''}" onclick="setCap(${v})">${f0(v)}</button>`).join('')}</div></div>
+ <button class="b big cta" onclick="go('x')">배당 포트폴리오 만들기</button></div></div><div class="box qrc"><b>스마트폰으로 접속하세요</b><div class="qrb"><div id="qr"></div></div><div class="mu" id="qu" style="margin-top:8px;word-break:break-all;max-width:260px"></div></div></div>
+ <div class="hg hm"><div class="box mis"><h2>MISSION</h2><p style="margin:0">당신에게 최대 $100,000이 주어졌습니다.<br>미국 배당주를 이용해 나만의 배당 포트폴리오를 만들어보세요.</p>
+ <ol style="padding-left:22px"><li>총 투자금은 내가 정한 시작 투자금(최대 $100,000)을 초과할 수 없습니다.</li><li>최소 5개 종목 이상을 선택하세요.</li><li>가능한 한 12개월 모두 배당금을 받을 수 있도록 구성해보세요.</li><li>배당률만 보지 말고 배당성장률, Payout Ratio, 배당연속지급년수도 함께 고려해보세요.</li></ol></div>
  <div class="box"><h2>이렇게 진행해요</h2>${st.map((x,i)=>`<div class="stp"><i>${i+1}</i><div><b>${x[0]}</b><span>${x[1]}</span></div></div>`).join('')}</div></div>
- <div class="box mu" style="font-size:clamp(12px,1.2vw,15px)">데이터 기준: ${ASOF}. 주가·배당 데이터는 강의용으로 제공된 값이며 실시간으로 바뀌지 않아요. 배당지급월은 배당락일이 아닌 실제 지급일 기준이에요. 5년 주가 CAGR은 약 5년 전 대비 개략 추정치라 실제와 다를 수 있어요. 입력한 포트폴리오는 이 기기의 브라우저에만 저장돼요. 모든 결과는 교육용 계산이며 투자 추천이 아닙니다.</div>
- <button class="b big cta" onclick="go('x')">배당 포트폴리오 만들기</button>`;
+ <div class="box mu" style="font-size:clamp(12px,1.2vw,15px)">데이터 기준: ${ASOF}. 주가·배당 데이터는 강의용으로 제공된 값이며 실시간으로 바뀌지 않아요. 배당지급월은 배당락일이 아닌 실제 지급일 기준이에요. 5년 주가 CAGR은 약 5년 전 대비 개략 추정치라 실제와 다를 수 있어요. 입력한 포트폴리오는 이 기기의 브라우저에만 저장돼요. 모든 결과는 교육용 계산이며 투자 추천이 아닙니다.</div>`;
  qr();
 }
+function setCap(v){
+ const o=parseInt(String(v).replace(/\D/g,''))||0;v=Math.min(MAXCAP,Math.max(1000,o));let m=o>MAXCAP?'시작 투자금은 최대 $100,000까지 설정할 수 있어요':o<1000?'시작 투자금은 최소 $1,000부터 설정할 수 있어요':'';
+ if(tot().inv>v){pf={};sv();m='시작 투자금이 바뀌어 담은 종목을 초기화했어요'}
+ CAP=v;try{localStorage.setItem('bw_cap',v)}catch(e){}hd();nv();
+ const i=$('#cp');if(i)i.value=v.toLocaleString('en-US');document.querySelectorAll('.chips button').forEach(b=>b.classList.toggle('on',+b.dataset.v==v));if(m)toast(m)}
 function qr(){
  const e=$('#qr');if(!e)return;const u=SHARE_URL||location.href.split('#')[0].split('?')[0];$('#qu').textContent=u.replace(/^https?:\/\//,'');e.innerHTML='';
  if(/^https?:/.test(u)&&window.QRCode)new QRCode(e,{text:u,width:220,height:220,colorDark:'#0a1220',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
@@ -199,7 +211,7 @@ function list(){
 function vp(){
  const{h,inv,cash}=tot(),L=live(h),mc=mon(h).filter(x=>x>0).length;
  const ck=(t,ok)=>`<div class="ck ${ok?'ok':''}"><u>${ok?'✓':'○'}</u>${t}</div>`;
- $('#v').innerHTML=`<h2>$100,000 포트폴리오 만들기</h2><div class="box">${ck(`최소 5개 종목 (현재 ${L.length}개)`,L.length>=MIN)}${ck(`12개월 배당 수령 (현재 ${mc}/12개월)`,mc==12)}${ck('총 투자금 $100,000 이내',inv<=CAP)}</div>`+
+ $('#v').innerHTML=`<h2>${f0(CAP)} 포트폴리오 만들기</h2><div class="box">${ck(`최소 5개 종목 (현재 ${L.length}개)`,L.length>=MIN)}${ck(`12개월 배당 수령 (현재 ${mc}/12개월)`,mc==12)}${ck('총 투자금 '+f0(CAP)+' 이내',inv<=CAP)}</div>`+
  (h.length?h.map(x=>`<div class="c"><div class="ch"><div><b>${x.n}</b> <span class="tk">${x.t}</span><div class="mu">현재주가 ${f2(x.p)}</div></div><button class="x" onclick="rm('${x.t}')">삭제</button></div>
  <div class="ir"><button onclick="st('${x.t}',-1000)" aria-label="1,000 감소">−</button><input inputmode="numeric" value="${x.amt}" onchange="sa('${x.t}',this.value)" aria-label="투자금 입력 $"><button onclick="st('${x.t}',1000)" aria-label="1,000 증가">+</button></div>
  <div class="g">${K('매수 수량',x.sh+'주')}${K('실제 투자금',f0(x.cost))}${K('예상 연배당',f0(x.div),'ac')}</div>${x.sh==0?'<div class="mu dn" style="margin-top:6px">투자금이 현재주가보다 작아 0주입니다.</div>':''}</div>`).join(''):emp())+
@@ -246,7 +258,7 @@ function vt(){
   const r=(l,a,c,cl='')=>`<div>${l}</div><div>${a}</div><b class="${cl}">${c}</b>`;
   b+=`<div class="box"><div class="cmp"><div class="h"></div><div class="h">현재</div><div class="h">5년 후 예상</div>
   ${r('포트폴리오 가치',f0(inv),hasP?f0(V[5]):'-','ac')}${r('연간 배당',f0(D[0]),f0(D[5]),'ac')}${r('월평균 배당',f0(D[0]/12),f0(D[5]/12))}${r('배당률(투자금 대비)',f1(D[0]/inv*100),f1(D[5]/inv*100),'up')}</div>
-  <div class="mu" style="margin-top:10px">현재 투자원금 $100,000 · 현재 포트폴리오 평가 기준금액 ${f0(inv)} · 남은 현금 ${f0(CAP-inv)}(5년 후 계산에서 제외)<br>5년 후 배당률은 실제 매수금액 기준 Yield on Cost입니다.</div></div>
+  <div class="mu" style="margin-top:10px">현재 투자원금 ${f0(CAP)} · 현재 포트폴리오 평가 기준금액 ${f0(inv)} · 남은 현금 ${f0(CAP-inv)}(5년 후 계산에서 제외)<br>5년 후 배당률은 실제 매수금액 기준 Yield on Cost입니다.</div></div>
   <h3>예상 포트폴리오 평가금액 변화</h3><div class="box">${hasP?lc(V,'#5aa9ff'):'<div class="mu">5년 주가 CAGR 데이터가 없는 종목이 있어 평가금액은 계산하지 않았어요.</div>'}</div>
   <h3>예상 연간 배당금 변화</h3><div class="box">${lc(D,'#f2c14e')}</div>
   <div class="nt">배당 = 보유주식수 × 연간배당액 × (1+배당 CAGR)^n, 가치 = 보유주식수 × 현재주가 × (1+주가 CAGR)^n 로 계산한 단순 시뮬레이션입니다.${L.some(x=>x.pe)?' 5년 주가 CAGR은 개략 추정치입니다.':''}</div>`;
@@ -256,7 +268,7 @@ function vt(){
 const V={h:vh,x:vx,p:vp,c:vc,a:va,t:vt};
 
 /* ===== 시작 ===== */
-function boot(){pf=Object.fromEntries(Object.entries(pf).filter(([t])=>STOCKS.some(s=>s.t==t)));hd();go(tab)}
+function boot(){pf=Object.fromEntries(Object.entries(pf).filter(([t])=>STOCKS.some(s=>s.t==t)));if(tot().inv>CAP){pf={};sv()}hd();go(tab)}
 boot();
 fetch('stocks.csv').then(r=>r.ok?r.text():Promise.reject()).then(t=>{const d=parseCSV(t);if(d.length){STOCKS=d;boot()}}).catch(()=>{});
 </script>
