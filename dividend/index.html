@@ -42,7 +42,7 @@ details.f summary{min-height:44px;display:flex;align-items:center;cursor:pointer
 .cmp{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:6px 8px;align-items:center;font-size:13px}.cmp .h{color:var(--mu);font-size:11px}.cmp b{font-size:15px}
 .nt{background:#2a2412;border:1px solid #5b4a1e;border-radius:12px;padding:11px 13px;font-size:13px;color:#f3dfa6}
 .ck{display:flex;gap:8px;margin:4px 0}.ck u{text-decoration:none;color:var(--mu)}.ck.ok u{color:var(--up)}
-nav{position:fixed;bottom:0;left:0;right:0;background:#0b1527;border-top:1px solid var(--ln);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom);z-index:6}
+nav{position:fixed;bottom:0;left:0;right:0;background:#0b1527;border-top:1px solid var(--ln);display:grid;grid-auto-flow:column;grid-auto-columns:1fr;padding-bottom:env(safe-area-inset-bottom);z-index:6}
 nav button{background:none;border:0;min-height:60px;color:var(--mu);font-size:12px;cursor:pointer;line-height:1.25}nav button b{display:block;font-size:15px}nav button.on{color:var(--ac);box-shadow:inset 0 2px 0 var(--ac)}
 #ts{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom));background:var(--ac);color:#1a1405;border-radius:12px;padding:10px 14px;font-weight:600;font-size:14px;z-index:9;display:none}
 .emp{text-align:center;color:var(--mu);padding:30px 10px}
@@ -80,45 +80,49 @@ body[data-t=h] main{max-width:1180px;word-break:keep-all}body[data-t=h] header .
  CSV 열: 기업명(종목), 티커, 현재 주가, 배당금(연간), 배당지급(월), 5년 배당성장률, 배당지급(연속년수), Payout Ratio, 비고, [섹터], [5년 주가 CAGR]
  섹터·5년 주가 CAGR 열은 선택입니다(없으면 섹터는 아래 SEC 표, 주가 CAGR은 '-'). 헤더에 "업데이트 날짜 YYYY.MM.DD"가 있으면 기준일로 표시합니다.
  RAW 열 순서: [종목, 티커, 섹터, 주가, 연간배당, 배당CAGR, 주가CAGR, 지급월, 연속년수, Payout, 비고] */
-let ASOF="2026.10.09 업데이트";
+let ASOF="2026.10.25 업데이트";
 /* 5년 주가 CAGR 근사치(약 2021.9 → 기준일 주가 기준 개략 추정, 실제와 다를 수 있음). 시트/CSV에 주가 CAGR 열이 있으면 그 값이 우선합니다. */
-const PCA={"KO": 9.5, "PG": 1.0, "PEP": -4.0, "HSY": -1.0, "JNJ": 9.5, "PFE": -10.0, "O": -5.0, "MAIN": 4.5, "SBUX": -3.0, "NKE": -27.0, "MCD": -0.5, "V": 11.0, "JPM": 14.5, "C": 12.5, "WFC": 11.0, "BAC": 3.0, "UNP": 5.5, "LMT": 9.0, "CSCO": 15.5, "OKE": 6.5, "MDLZ": 0.0, "UNH": -2.5, "MET": 9.5, "CVX": 14.5, "XOM": 22.0, "MO": 10.0, "OHI": 3.5, "WELL": 22.0, "QCOM": 6.0, "ABBV": 20.0};
+const PCA={"KO": 10.5, "PG": 2.5, "PEP": -3.0, "HSY": -0.5, "JNJ": 10.0, "PFE": -8.5, "O": -4.0, "MAIN": 4.0, "SBUX": -1.5, "NKE": -26.0, "MCD": 0.5, "V": 13.0, "JPM": 14.5, "C": 11.0, "WFC": 11.0, "BAC": 2.0, "UNP": 6.5, "LMT": 12.5, "CSCO": 13.5, "OKE": 8.0, "MDLZ": 1.0, "UNH": 0.0, "MET": 9.5, "CVX": 16.5, "XOM": 24.0, "MO": 11.0, "OHI": 4.5, "WELL": 23.0, "QCOM": 6.0, "ABBV": 20.5, "SCHD": 6.5, "DGRO": 7.5, "VIG": 8.0, "NOBL": 4.5};
 let SHARE_URL='';/* QR에 넣을 주소를 고정하려면 입력(비우면 현재 접속 주소 자동 사용) */
-const SEC={"KO": "필수소비재", "PG": "필수소비재", "PEP": "필수소비재", "HSY": "필수소비재", "MDLZ": "필수소비재", "MO": "필수소비재", "JNJ": "헬스케어", "PFE": "헬스케어", "UNH": "헬스케어", "O": "부동산(리츠)", "MAIN": "금융", "V": "금융", "JPM": "금융", "C": "금융", "WFC": "금융", "BAC": "금융", "MET": "금융", "SBUX": "임의소비재", "NKE": "임의소비재", "MCD": "임의소비재", "UNP": "산업재", "LMT": "산업재", "CSCO": "IT", "OKE": "에너지", "CVX": "에너지", "XOM": "에너지", "OHI": "부동산(리츠)", "WELL": "부동산(리츠)", "ABBV": "헬스케어", "QCOM": "IT"};
+const SEC={"KO": "필수소비재", "PG": "필수소비재", "PEP": "필수소비재", "HSY": "필수소비재", "MDLZ": "필수소비재", "MO": "필수소비재", "JNJ": "헬스케어", "PFE": "헬스케어", "UNH": "헬스케어", "O": "부동산(리츠)", "MAIN": "금융", "V": "금융", "JPM": "금융", "C": "금융", "WFC": "금융", "BAC": "금융", "MET": "금융", "SBUX": "임의소비재", "NKE": "임의소비재", "MCD": "임의소비재", "UNP": "산업재", "LMT": "산업재", "CSCO": "IT", "OKE": "에너지", "CVX": "에너지", "XOM": "에너지", "OHI": "부동산(리츠)", "WELL": "부동산(리츠)", "ABBV": "헬스케어", "QCOM": "IT", "SCHD": "ETF", "DGRO": "ETF", "VIG": "ETF", "NOBL": "ETF"};
 const RAW=[
-["코카콜라", "KO", "필수소비재", 87.77, 2.12, 4.61, 9.5, "4,7,10,12", 63.0, 77.24, ""],
-["피앤지", "PG", "필수소비재", 150.59, 4.35, 6.0, 1.0, "2,5,8,11", 69.0, 63.77, ""],
-["펩시콜라", "PEP", "필수소비재", 128.34, 5.92, 6.77, -4.0, "1,3,6,9", 54.0, 74.72, "주가 우하향중..."],
-["허쉬초코렛", "HSY", "필수소비재", 162.54, 5.81, 11.91, -1.0, "3,6,9,12", 63.0, 75.0, ""],
-["존슨앤존스", "JNJ", "헬스케어", 256.48, 5.36, 5.08, 9.5, "3,6,9,12", 64.0, 59.99, ""],
-["화이자", "PFE", "헬스케어", 27.82, 1.72, 2.24, -10.0, "3,6,9,12", 15.0, 56.39, ""],
-["리얼티인컴", "O", "부동산(리츠)", 54.17, 3.26, 2.84, -5.0, "1,2,3,4,5,6,7,8,9,10,11,12", 31.0, 75.3, ""],
-["메인스트리트", "MAIN", "금융", 54.47, 3.18, 4.67, 4.5, "1,2,3,4,5,6,7,8,9,10,11,12", 17.0, 79.0, ""],
-["스타벅스", "SBUX", "임의소비재", 93.21, 2.48, 6.62, -3.0, "2,5,8,11", 15.0, 102.06, ""],
-["나이키", "NKE", "임의소비재", 34.74, 1.64, 8.78, -27.0, "1,4,7,10", 24.0, 103.82, "주가 우하향중..."],
-["맥도널드", "MCD", "임의소비재", 236.9, 7.44, 7.5, -0.5, "3,6,9,12", 48.0, 59.45, "주가 우하향중..."],
-["비자", "V", "금융", 375.1, 2.68, 15.93, 11.0, "3,6,9,12", 18.0, 22.12, ""],
-["제이피모건", "JPM", "금융", 331.42, 6.6, 10.0, 14.5, "1,4,7,10", 15.0, 26.6, ""],
-["시티은행", "C", "금융", 128.08, 2.68, 3.0, 12.5, "2,5,8,11", 30.0, 30.0, "최근 10년동안 배당 성장중"],
-["웰스파고", "WFC", "금융", 82.03, 2.0, 30.0, 11.0, "3,6,9,12", 20.0, 29.0, "배당성장은 4년연속중"],
-["뱅크오브아메리카", "BAC", "금융", 53.61, 1.28, 9.24, 3.0, "3,6,9,12", 12.0, 29.0, ""],
-["유니온퍼시픽", "UNP", "산업재", 278.2, 5.68, 6.76, 5.5, "3,6,9,12", 19.0, 44.95, ""],
-["록히트마틴", "LMT", "산업재", 507.89, 13.8, 6.0, 9.0, "3,6,9,12", 23.0, 50.0, ""],
-["시스코", "CSCO", "IT", 114.89, 1.68, 2.6, 15.5, "1,4,7,10", 16.0, 49.39, ""],
-["원오크", "OKE", "에너지", 90.29, 4.28, 2.54, 6.5, "2,5,8,11", 3.0, 72.32, ""],
-["몬델레즈", "MDLZ", "필수소비재", 60.67, 2.08, 9.68, 0.0, "1,4,7,10", 12.0, 72.27, ""],
-["유나이티드헬스", "UNH", "헬스케어", 370.95, 9.28, 11.47, -2.5, "3,6,9,12", 34.0, 57.33, ""],
-["매트라이프", "MET", "금융", 98.47, 2.37, 4.29, 9.5, "3,6,9,12", 13.0, 46.36, ""],
-["쉐브론", "CVX", "에너지", 211.55, 7.12, 6.0, 14.5, "3,6,9,12", 56.0, 67.33, ""],
-["엑슨모빌", "XOM", "에너지", 168.5, 4.12, 3.23, 22.0, "3,6,9,12", 43.0, 52.63, ""],
-["알트리아", "MO", "필수소비재", 71.42, 4.44, 4.27, 10.0, "1,4,7,10", 56.0, 88.57, ""],
-["오메가헬스케어", "OHI", "부동산(리츠)", 44.14, 2.72, 0.07, 3.5, "2,5,8,11", 24.0, 92.0, ""],
-["웰타워", "WELL", "부동산(리츠)", 223.04, 3.4, 4.7, 22.0, "2,5,8,11", 51.0, 132.0, ""],
-["퀄컴", "QCOM", "IT", 176.01, 3.68, 6.42, 6.0, "3,6,9,12", 24.0, 41.0, ""],
-["에브비", "ABBV", "헬스케어", 272.42, 6.92, 6.1, 20.0, "2,5,8,11", 14.0, 189.0, ""]
+["코카콜라", "KO", "필수소비재", 92.71, 2.12, 4.61, 10.5, "4,7,10,12", 63.0, 77.24, ""],
+["피앤지", "PG", "필수소비재", 161.02, 4.35, 6.0, 2.5, "2,5,8,11", 69.0, 63.77, ""],
+["펩시콜라", "PEP", "필수소비재", 135.77, 5.92, 6.77, -3.0, "1,3,6,9", 54.0, 74.72, "주가 우하향중..."],
+["허쉬초코렛", "HSY", "필수소비재", 169.64, 5.81, 11.91, -0.5, "3,6,9,12", 63.0, 75.0, ""],
+["존슨앤존스", "JNJ", "헬스케어", 263.81, 5.36, 5.08, 10.0, "3,6,9,12", 64.0, 59.99, ""],
+["화이자", "PFE", "헬스케어", 30.03, 1.72, 2.24, -8.5, "3,6,9,12", 15.0, 56.39, ""],
+["리얼티인컴", "O", "부동산(리츠)", 56.89, 3.26, 2.84, -4.0, "1,2,3,4,5,6,7,8,9,10,11,12", 31.0, 75.3, ""],
+["메인스트리트", "MAIN", "금융", 53.51, 3.18, 4.67, 4.0, "1,2,3,4,5,6,7,8,9,10,11,12", 17.0, 79.0, ""],
+["스타벅스", "SBUX", "임의소비재", 100.8, 2.48, 6.62, -1.5, "2,5,8,11", 15.0, 102.06, ""],
+["나이키", "NKE", "임의소비재", 37.3, 1.64, 8.78, -26.0, "1,4,7,10", 24.0, 103.82, "주가 우하향중..."],
+["맥도널드", "MCD", "임의소비재", 248.46, 7.44, 7.5, 0.5, "3,6,9,12", 48.0, 59.45, "주가 우하향중..."],
+["비자", "V", "금융", 407.92, 2.68, 15.93, 13.0, "3,6,9,12", 18.0, 22.12, ""],
+["제이피모건", "JPM", "금융", 331.58, 6.6, 10.0, 14.5, "1,4,7,10", 15.0, 26.6, ""],
+["시티은행", "C", "금융", 120.62, 2.68, 3.0, 11.0, "2,5,8,11", 30.0, 30.0, "최근 10년동안 배당 성장중"],
+["웰스파고", "WFC", "금융", 82.39, 2.0, 30.0, 11.0, "3,6,9,12", 20.0, 29.0, "배당성장은 4년연속중"],
+["뱅크오브아메리카", "BAC", "금융", 50.56, 1.28, 9.24, 2.0, "3,6,9,12", 12.0, 29.0, ""],
+["유니온퍼시픽", "UNP", "산업재", 292.87, 5.68, 6.76, 6.5, "3,6,9,12", 19.0, 44.95, ""],
+["록히트마틴", "LMT", "산업재", 604.18, 13.8, 6.0, 12.5, "3,6,9,12", 23.0, 50.0, ""],
+["시스코", "CSCO", "IT", 106.5, 1.68, 2.6, 13.5, "1,4,7,10", 16.0, 49.39, ""],
+["원오크", "OKE", "에너지", 95.83, 4.28, 2.54, 8.0, "2,5,8,11", 3.0, 72.32, ""],
+["몬델레즈", "MDLZ", "필수소비재", 63.8, 2.08, 9.68, 1.0, "1,4,7,10", 12.0, 72.27, ""],
+["유나이티드헬스", "UNH", "헬스케어", 418.09, 9.28, 11.47, 0.0, "3,6,9,12", 34.0, 57.33, ""],
+["매트라이프", "MET", "금융", 98.82, 2.37, 4.29, 9.5, "3,6,9,12", 13.0, 46.36, ""],
+["쉐브론", "CVX", "에너지", 233.21, 7.12, 6.0, 16.5, "3,6,9,12", 56.0, 67.33, ""],
+["엑슨모빌", "XOM", "에너지", 183.21, 4.12, 3.23, 24.0, "3,6,9,12", 43.0, 52.63, ""],
+["알트리아", "MO", "필수소비재", 74.31, 4.44, 4.27, 11.0, "1,4,7,10", 56.0, 88.57, ""],
+["오메가헬스케어", "OHI", "부동산(리츠)", 46.23, 2.72, 0.07, 4.5, "2,5,8,11", 24.0, 92.0, ""],
+["웰타워", "WELL", "부동산(리츠)", 237.32, 3.4, 4.7, 23.0, "2,5,8,11", 51.0, 132.0, ""],
+["퀄컴", "QCOM", "IT", 175.91, 3.68, 6.42, 6.0, "3,6,9,12", 24.0, 41.0, ""],
+["에브비", "ABBV", "헬스케어", 285.64, 6.92, 6.1, 20.5, "2,5,8,11", 14.0, 189.0, ""],
+["SCHD", "SCHD", "ETF", 35.27, 1.15, 6.36, 6.5, "3,6,9,12", 14.0, null, ""],
+["DGRO", "DGRO", "ETF", 79.65, 1.5, 9.0, 7.5, "3,6,9,12", 11.0, null, ""],
+["VIG", "VIG", "ETF", 243.12, 3.68, 5.82, 8.0, "3,6,9,12", 12.0, null, ""],
+["NOBL", "NOBL", "ETF", 58.32, 1.25, 6.44, 4.5, "3,6,9,12", 3.0, null, "25년이상 배당지급한 주식ETF"]
 ];
 const row=r=>{const hp=!(r[6]==null||r[6]===''||isNaN(+r[6]));let m=String(r[7]).split(/\D+/).filter(Boolean).map(Number).filter(x=>x>=1&&x<=12);if(!m.length&&/월\s*배당|monthly/i.test(r[7]))m=[1,2,3,4,5,6,7,8,9,10,11,12];
- return{n:r[0],t:r[1],s:r[2]||SEC[r[1]]||'기타',p:+r[3],d:+r[4],dc:+r[5],pc:hp?+r[6]:(PCA[r[1]]!=null?PCA[r[1]]:null),pe:!hp&&PCA[r[1]]!=null,m,y:+r[8],po:+r[9],nt:r[10]||''}};
+ return{n:r[0],t:r[1],s:r[2]||SEC[r[1]]||'기타',p:+r[3],d:+r[4],dc:+r[5],pc:hp?+r[6]:(PCA[r[1]]!=null?PCA[r[1]]:null),pe:!hp&&PCA[r[1]]!=null,m,y:+r[8],po:(r[9]==null||r[9]===''||isNaN(+r[9]))?null:+r[9],nt:r[10]||''}};
 let STOCKS=RAW.map(row);
 function parseCSV(t){
  const rows=t.replace(/^\uFEFF/,'').trim().split(/\r?\n/).map(l=>{const o=[];let c='',q=0;for(const ch of l){if(ch=='"')q=!q;else if(ch==','&&!q){o.push(c);c=''}else c+=ch}o.push(c);return o.map(x=>x.trim())});
@@ -127,7 +131,7 @@ function parseCSV(t){
  let mi=ix('배당지급월');if(mi<0)mi=ix('배당지급');let yi=ix('연속');if(yi<0){const l=h.lastIndexOf('배당지급');yi=l!=mi?l:-1}
  const I=[ix('종목','기업명'),ix('티커'),ix('섹터'),ix('현재주가'),ix('연간배당','배당금'),ix('배당cagr','배당성장률'),ix('주가cagr'),mi,yi,ix('payout'),ix('비고')];
  const n=v=>parseFloat(String(v).replace(/[$%,]/g,''))||0,g=i=>i<0?'':rows_r[i];let rows_r;
- return rows.map(r=>{rows_r=r;return row([g(I[0]),g(I[1]),g(I[2]),n(g(I[3])),n(g(I[4])),n(g(I[5])),g(I[6])===''?null:n(g(I[6])),g(I[7]),n(g(I[8])),n(g(I[9])),g(I[10])])}).filter((s,i,a)=>s.t&&s.p>0&&a.findIndex(x=>x.t==s.t)==i);
+ return rows.map(r=>{rows_r=r;return row([g(I[0]),g(I[1]),g(I[2]),n(g(I[3])),n(g(I[4])),n(g(I[5])),g(I[6])===''?null:n(g(I[6])),g(I[7]),n(g(I[8])),(/^[\s\-–—]*$/.test(g(I[9]))?null:n(g(I[9]))),g(I[10])])}).filter((s,i,a)=>s.t&&s.p>0&&a.findIndex(x=>x.t==s.t)==i);
 }
 
 /* ===== 상태·유틸 ===== */
@@ -207,12 +211,12 @@ function vx(){
 }
 function list(){
  const g=(v,d)=>v===''?d:+v,q=F.q.toLowerCase();
- let a=STOCKS.filter(s=>(!q||(s.n+s.t).toLowerCase().includes(q))&&(!F.sec||s.s==F.sec)&&(!F.mo||s.m.includes(+F.mo))&&yl(s)>=g(F.yd,-1e9)&&s.dc>=g(F.dc,-1e9)&&(F.pc===''||(s.pc!=null&&s.pc>=+F.pc))&&s.po<=g(F.po,1e9)&&s.y>=g(F.y,0));
- const key={yd:yl,dc:s=>s.dc,pc:s=>s.pc==null?-1e9:s.pc,y:s=>s.y,po:s=>-s.po};
+ let a=STOCKS.filter(s=>(!q||(s.n+s.t).toLowerCase().includes(q))&&(!F.sec||s.s==F.sec)&&(!F.mo||s.m.includes(+F.mo))&&yl(s)>=g(F.yd,-1e9)&&s.dc>=g(F.dc,-1e9)&&(F.pc===''||(s.pc!=null&&s.pc>=+F.pc))&&(F.po===''||(s.po!=null&&s.po<=+F.po))&&s.y>=g(F.y,0));
+ const key={yd:yl,dc:s=>s.dc,pc:s=>s.pc==null?-1e9:s.pc,y:s=>s.y,po:s=>s.po==null?-1e9:-s.po};
  a.sort(F.so=='n'?(x,y)=>x.n.localeCompare(y.n):(x,y)=>key[F.so](y)-key[F.so](x));
  $('#cnt').textContent=a.length+'개 종목';
  $('#L').innerHTML=a.map(s=>{const on=s.t in pf;return`<div class="c"><div class="ch"><div><b>${s.n}</b> <span class="tk">${s.t}</span><div class="mu">${s.s}</div></div><div class="r"><b>${f2(s.p)}</b><div class="mu">현재주가</div>${W(s.p)}</div></div>
- <div class="g">${K('현재 배당률',f1(yl(s)),'ac')}${K('주당 연간배당',f2(s.d),'',s.d)}${K('배당연속지급',s.y+'년')}${K('5년 배당 CAGR',f1(s.dc),s.dc>=0?'up':'dn')}${K('5년 주가 CAGR',s.pc==null?'-':fs(s.pc),s.pc==null?'mu':s.pc>0?'up':s.pc<0?'dn':'')}${K('Payout Ratio',f1(s.po),s.po>=80?'dn':'')}</div>
+ <div class="g">${K('현재 배당률',f1(yl(s)),'ac')}${K('주당 연간배당',f2(s.d),'',s.d)}${K('배당연속지급',s.y+'년')}${K('5년 배당 CAGR',f1(s.dc),s.dc>=0?'up':'dn')}${K('5년 주가 CAGR',s.pc==null?'-':fs(s.pc),s.pc==null?'mu':s.pc>0?'up':s.pc<0?'dn':'')}${K('Payout Ratio',s.po==null?'-':f1(s.po),s.po==null?'mu':s.po>=80?'dn':'')}</div>
  <div class="mm">${[...Array(12)].map((_,i)=>`<span class="${s.m.includes(i+1)?'on':''}">${i+1}</span>`).join('')}</div>
  <button class="b ${on?'on':''}" onclick="tg('${s.t}')">${on?'담음 · 눌러서 빼기':'포트폴리오에 담기'}</button></div>`}).join('')||'<div class="emp">조건에 맞는 종목이 없어요. 필터를 줄여보세요.</div>';
 }
@@ -242,14 +246,14 @@ function vc(){
 const PAL=['#f2c14e','#4fd1a5','#5aa9ff','#ff7a7a','#b48cff','#ff9f5a','#7fe0e8','#c6d36b','#f58bc0','#8696b3'];
 function va(){
  const{h,inv}=tot(),L=live(h);if(!L.length)return $('#v').innerHTML='<h2>현재 포트폴리오 분석</h2>'+emp();
- const LP=L.filter(x=>x.pc!=null),a=mon(h),T=a.reduce((x,y)=>x+y,0),sec={};L.forEach(x=>sec[x.s]=(sec[x.s]||0)+x.cost);
+ const LP=L.filter(x=>x.pc!=null),LO=L.filter(x=>x.po!=null),a=mon(h),T=a.reduce((x,y)=>x+y,0),sec={};L.forEach(x=>sec[x.s]=(sec[x.s]||0)+x.cost);
  const S=Object.entries(sec).sort((x,y)=>y[1]-x[1]);let c=0;
  const cg=S.map((e,i)=>{const s=c,p=e[1]/inv*100;c+=p;return`${PAL[i%10]} ${s}% ${c}%`}).join(',');
  const cnt=[...Array(12)].map((_,i)=>L.filter(x=>x.m.includes(i+1)).length),cm=Math.max(...cnt);
- $('#v').innerHTML=`<h2>현재 포트폴리오 분석</h2><div class="box"><div class="g g2">${K('예상 연간 배당금',f0(T),'ac',T)}${K('월평균 배당금',f0(T/12),'',T/12)}${K('포트폴리오 배당수익률',f1(T/inv*100))}${K('배당연속지급년수',wa(L,'y','cost').toFixed(1)+'년')}${K('배당 CAGR (배당금 가중)',f1(wa(L,'dc','div')))}${K('주가 CAGR (투자금 가중)',LP.length?fs(wa(LP,'pc','cost'))+(LP.length<L.length?'*':''):'-',LP.length?(wa(LP,'pc','cost')>=0?'up':'dn'):'')}${K('Payout Ratio (투자금 가중)',f1(wa(L,'po','cost')))}${K('보유 종목',L.length+'개')}</div></div>
+ $('#v').innerHTML=`<h2>현재 포트폴리오 분석</h2><div class="box"><div class="g g2">${K('예상 연간 배당금',f0(T),'ac',T)}${K('월평균 배당금',f0(T/12),'',T/12)}${K('포트폴리오 배당수익률',f1(T/inv*100))}${K('배당연속지급년수',wa(L,'y','cost').toFixed(1)+'년')}${K('배당 CAGR (배당금 가중)',f1(wa(L,'dc','div')))}${K('주가 CAGR (투자금 가중)',LP.length?fs(wa(LP,'pc','cost'))+(LP.length<L.length?'*':''):'-',LP.length?(wa(LP,'pc','cost')>=0?'up':'dn'):'')}${K('Payout Ratio (투자금 가중)',LO.length?f1(wa(LO,'po','cost'))+(LO.length<L.length?'*':''):'-')}${K('보유 종목',L.length+'개')}</div></div>
  <h3>투자 섹터 비중</h3><div class="box row"><div class="dn2" style="background:conic-gradient(${cg})"></div><div class="lg">${S.map((e,i)=>`<div><span><s style="background:${PAL[i%10]}"></s>${e[0]}</span><b>${f1(e[1]/inv*100)}</b></div>`).join('')}</div></div>
  <h3>배당 지급월 분포 (지급 종목 수)</h3><div class="box"><div class="bars" style="height:110px">${cnt.map((v,i)=>`<div class="bc">${v||''}<i class="${v?'':'z'}" style="height:${cm?v/cm*85:0}%"></i>${i+1}</div>`).join('')}</div></div>
- <div class="mu">평균은 단순 평균이 아닌 투자금(또는 배당금) 비중으로 계산했습니다. 이 화면은 포트폴리오를 평가하거나 투자를 추천하지 않으며, 내 포트폴리오의 특성을 이해하기 위한 정보입니다.${LP.length<L.length?' * 주가 CAGR 데이터가 없는 종목은 제외하고 계산했습니다.':''}</div>`;
+ <div class="mu">평균은 단순 평균이 아닌 투자금(또는 배당금) 비중으로 계산했습니다. 이 화면은 포트폴리오를 평가하거나 투자를 추천하지 않으며, 내 포트폴리오의 특성을 이해하기 위한 정보입니다.${LP.length<L.length||LO.length<L.length?' * 데이터가 없는 종목(예: ETF의 Payout Ratio)은 제외하고 계산했습니다.':''}</div>`;
 }
 
 /* ===== STEP 5 타임머신 ===== */
