@@ -9,7 +9,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-padding-top:150px}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 -apple-system,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;font-variant-numeric:tabular-nums;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
-button,input,select{font:inherit;color:inherit}
+button,input,select{font:inherit;color:inherit}button{touch-action:manipulation}
 header{position:sticky;top:0;z-index:5;background:#0b1527ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--ln);padding:calc(8px + env(safe-area-inset-top)) 14px 8px}
 .in{max-width:760px;margin:0 auto}
 .br{display:flex;align-items:baseline;gap:8px}.br b{font-size:17px;letter-spacing:-.3px}.br span{color:var(--mu);font-size:12px}
@@ -158,9 +158,9 @@ const emp=()=>`<div class="emp">아직 담은 종목이 없어요.<button class=
 const live=h=>h.filter(x=>x.sh>0);
 
 /* ===== 동작 ===== */
-function sa(t,v){v=Math.max(0,parseInt(String(v).replace(/\D/g,''))||0);const other=tot().h.filter(x=>x.t!=t).reduce((a,x)=>a+x.cost,0),mx=CAP-other;
+function sa(t,v){v=typeof v=='number'?Math.max(0,Math.round(v)||0):(parseInt(String(v).replace(/\D/g,''))||0);const other=tot().h.filter(x=>x.t!=t).reduce((a,x)=>a+x.cost,0),mx=CAP-other;
  if(v>mx){v=mx;toast('총 투자금은 '+f0(CAP)+'을 넘을 수 없어 '+f0(mx)+'로 조정했어요')}pf[t]=v;sv();render()}
-const st=(t,d)=>sa(t,(pf[t]||0)+d);
+const stepOf=()=>Math.max(100,Math.round(CAP/10000)*100),st=(t,d)=>sa(t,(pf[t]||0)+d*stepOf());
 function rm(t){delete pf[t];sv();render()}
 function tg(t){if(t in pf)return rm(t);const s=STOCKS.find(x=>x.t==t),c=tot().cash;if(c<s.p)return toast('남은 현금이 부족해요');pf[t]=Math.min(Math.max(Math.round(CAP/1000)*100,100),c);sv();render();toast(s.t+' 담음 · 구성 탭에서 금액을 조정하세요')}
 function go(t){tab=t;document.body.dataset.t=t;V[t]();window.scrollTo(0,0);nv()}
@@ -227,9 +227,9 @@ function vp(){
  const ck=(t,ok)=>`<div class="ck ${ok?'ok':''}"><u>${ok?'✓':'○'}</u>${t}</div>`;
  $('#v').innerHTML=`<h2>${f0(CAP)} 포트폴리오 만들기</h2><div class="box">${ck(`최소 5개 종목 (현재 ${L.length}개)`,L.length>=MIN)}${ck(`12개월 배당 수령 (현재 ${mc}/12개월)`,mc==12)}${ck('총 투자금 '+f0(CAP)+' 이내',inv<=CAP)}</div>`+
  (h.length?h.map(x=>`<div class="c"><div class="ch"><div><b>${x.n}</b> <span class="tk">${x.t}</span><div class="mu">현재주가 ${f2(x.p)}</div></div><button class="x" onclick="rm('${x.t}')">삭제</button></div>
- <div class="ir"><button onclick="st('${x.t}',-1000)" aria-label="1,000 감소">−</button><input inputmode="numeric" value="${x.amt}" onchange="sa('${x.t}',this.value)" aria-label="투자금 입력 $"><button onclick="st('${x.t}',1000)" aria-label="1,000 증가">+</button></div>
+ <div class="ir"><button onclick="st('${x.t}',-1)" aria-label="투자금 감소">−</button><input inputmode="numeric" value="${x.amt}" onchange="sa('${x.t}',this.value)" aria-label="투자금 입력 $"><button onclick="st('${x.t}',1)" aria-label="투자금 증가">+</button></div>
  <div class="g">${K('매수 수량',x.sh+'주')}${K('실제 투자금',f0(x.cost),'',x.cost)}${K('예상 연배당',f0(x.div),'ac',x.div)}</div>${x.sh==0?'<div class="mu dn" style="margin-top:6px">투자금이 현재주가보다 작아 0주입니다.</div>':''}</div>`).join(''):emp())+
- (h.length?`<div class="mu">입력 금액 ÷ 현재주가를 내림해 정수 주식만 매수합니다. 남은 현금: <b class="ac">${f0(cash)}</b> <span class="mu">≈ ${kw(cash)}</span></div>`:'');
+ (h.length?`<div class="mu">입력 금액 ÷ 현재주가를 내림해 정수 주식만 매수합니다. 버튼 한 번에 ±${f0(stepOf())}. 남은 현금: <b class="ac">${f0(cash)}</b> <span class="mu">≈ ${kw(cash)}</span></div>`:'');
 }
 
 /* ===== STEP 3 캘린더 ===== */
