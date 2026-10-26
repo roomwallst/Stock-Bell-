@@ -135,7 +135,7 @@ function parseCSV(t){
 }
 
 /* ===== 상태·유틸 ===== */
-const MAXCAP=100000,MIN=5,$=s=>document.querySelector(s);let CAP=MAXCAP;
+const MAXCAP=100000,MIN=3,$=s=>document.querySelector(s);let CAP=MAXCAP;
 const f0=n=>'$'+Math.round(n).toLocaleString('en-US'),f2=n=>'$'+n.toFixed(2),f1=n=>n.toFixed(1)+'%';
 const fk=n=>n>=1000?'$'+(n/1000).toFixed(n>=1e4?0:1)+'k':'$'+Math.round(n);
 const yl=s=>s.d/s.p*100,fs=n=>(n>0?'+':'')+f1(n);
@@ -175,7 +175,7 @@ function vh(){
  <div class="cr"><div class="box capb"><b>시작 투자금 설정</b><div class="mu">최대 $100,000까지, 그 이하로 직접 정할 수 있어요</div><div class="capi"><span>$</span><input id="cp" inputmode="numeric" value="${CAP.toLocaleString('en-US')}" onchange="setCap(this.value)" aria-label="시작 투자금"></div><div class="mu" id="kcp" style="margin-top:4px"></div><div class="chips">${[10000,30000,50000,100000].map(v=>`<button data-v="${v}" class="${v==CAP?'on':''}" onclick="setCap(${v})">${f0(v)}</button>`).join('')}</div></div>
  <button class="b big cta" onclick="go('x')">배당 포트폴리오 만들기</button></div></div><div class="box qrc"><b>스마트폰으로 접속하세요</b><div class="qrb"><div id="qr"></div></div><div class="mu" id="qu" style="margin-top:8px;word-break:break-all;max-width:260px"></div></div></div>
  <div class="hg hm"><div class="box mis"><h2>MISSION</h2><p style="margin:0">당신에게 최대 $100,000이 주어졌습니다.<br>미국 배당주를 이용해 나만의 배당 포트폴리오를 만들어보세요.</p>
- <ol style="padding-left:22px"><li>총 투자금은 내가 정한 시작 투자금(최대 $100,000)을 초과할 수 없습니다.</li><li>최소 5개 종목 이상을 선택하세요.</li><li>가능한 한 12개월 모두 배당금을 받을 수 있도록 구성해보세요.</li><li>배당률만 보지 말고 배당성장률, Payout Ratio, 배당연속지급년수도 함께 고려해보세요.</li></ol></div>
+ <ol style="padding-left:22px"><li>총 투자금은 내가 정한 시작 투자금(최대 $100,000)을 초과할 수 없습니다.</li><li>3개 종목 이상을 선택하세요.</li><li>가능한 한 12개월 모두 배당금을 받을 수 있도록 구성해보세요.</li><li>배당률만 보지 말고 배당성장률, Payout Ratio, 배당연속지급년수도 함께 고려해보세요.</li></ol></div>
  <div class="box"><h2>이렇게 진행해요</h2>${st.map((x,i)=>`<div class="stp"><i>${i+1}</i><div><b>${x[0]}</b><span>${x[1]}</span></div></div>`).join('')}</div></div>
  <div class="box mu" style="font-size:clamp(12px,1.2vw,15px)">데이터 기준: ${ASOF}. 주가·배당 데이터는 강의용으로 제공된 값이며 실시간으로 바뀌지 않아요. 배당지급월은 배당락일이 아닌 실제 지급일 기준이에요. 5년 주가 CAGR은 약 5년 전 대비 개략 추정치라 실제와 다를 수 있어요. 입력한 포트폴리오는 이 기기의 브라우저에만 저장돼요. 모든 결과는 교육용 계산이며 투자 추천이 아닙니다.<br>원화 환산 환율: 1달러 = <input id="fx" inputmode="numeric" value="${FX}" onchange="setFx(this.value)" style="width:84px;min-height:36px;display:inline-block;text-align:right" aria-label="환율">원 (실제 환율과 다를 수 있어요 · 직접 수정 가능)</div>`;
  hd();qr();
@@ -223,9 +223,9 @@ function list(){
 
 /* ===== STEP 2 구성 ===== */
 function vp(){
- const{h,inv,cash}=tot(),L=live(h),mc=mon(h).filter(x=>x>0).length;
+ const{h,inv,cash}=tot(),L=live(h),ma=mon(h),mc=ma.filter(x=>x>0).length,miss=ma.map((v,i)=>v>0?0:i+1).filter(Boolean);
  const ck=(t,ok)=>`<div class="ck ${ok?'ok':''}"><u>${ok?'✓':'○'}</u>${t}</div>`;
- $('#v').innerHTML=`<h2>${f0(CAP)} 포트폴리오 만들기</h2><div class="box">${ck(`최소 5개 종목 (현재 ${L.length}개)`,L.length>=MIN)}${ck(`12개월 배당 수령 (현재 ${mc}/12개월)`,mc==12)}${ck('총 투자금 '+f0(CAP)+' 이내',inv<=CAP)}</div>`+
+ $('#v').innerHTML=`<h2>${f0(CAP)} 포트폴리오 만들기</h2><div class="box">${ck(`최소 ${MIN}개 종목 (현재 ${L.length}개)`,L.length>=MIN)}${ck(mc==12?'12개월 배당 수령 (12/12개월 모두 채움)':mc==0?'12개월 배당 수령 (아직 배당 받는 달이 없어요)':`12개월 배당 수령 (${mc}/12개월 · 빈 달: ${miss.map(m=>m+'월').join(', ')})`,mc==12)}${ck('총 투자금 '+f0(CAP)+' 이내',inv<=CAP)}</div>`+
  (h.length?h.map(x=>`<div class="c"><div class="ch"><div><b>${x.n}</b> <span class="tk">${x.t}</span><div class="mu">현재주가 ${f2(x.p)}</div></div><button class="x" onclick="rm('${x.t}')">삭제</button></div>
  <div class="ir"><button onclick="st('${x.t}',-1)" aria-label="투자금 감소">−</button><input inputmode="numeric" value="${x.amt}" onchange="sa('${x.t}',this.value)" aria-label="투자금 입력 $"><button onclick="st('${x.t}',1)" aria-label="투자금 증가">+</button></div>
  <div class="g">${K('매수 수량',x.sh+'주')}${K('실제 투자금',f0(x.cost),'',x.cost)}${K('예상 연배당',f0(x.div),'ac',x.div)}</div>${x.sh==0?'<div class="mu dn" style="margin-top:6px">투자금이 현재주가보다 작아 0주입니다.</div>':''}</div>`).join(''):emp())+
