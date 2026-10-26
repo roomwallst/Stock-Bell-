@@ -60,6 +60,7 @@ body[data-t=h] main{max-width:1180px;word-break:keep-all}body[data-t=h] header .
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 .kw{display:block;color:var(--mu);font-size:11px;font-weight:500;line-height:1.3;margin-top:1px}.bud .kw{font-size:10.5px}.r .kw{font-size:11px}
 @media(min-width:900px){.cr{display:grid;grid-template-columns:1fr 212px;gap:12px;align-items:start}.tl .cr .capb{max-width:none;min-height:212px;display:flex;flex-direction:column;justify-content:center}.tl .cr .cta{max-width:none;width:212px;height:212px;margin:14px 0 0;padding:12px;font-size:20px;line-height:1.35;border-radius:16px}}
+.mdl{position:fixed;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;z-index:20;padding:20px}.mdl .bx{background:var(--p);border:1px solid var(--ln);border-radius:16px;padding:22px 20px;max-width:360px;width:100%;text-align:center}.mdl p{margin:0 0 18px;font-size:17px;line-height:1.5;word-break:keep-all}.mdl .bt{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mdl button{min-height:52px;border-radius:12px;border:1px solid var(--ln);background:var(--p2);font-weight:700;font-size:16px;cursor:pointer}.mdl button.y{background:var(--dn);color:#2a0a0a;border:0}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async onload="window.qr&&qr()"></script>
 </head>
@@ -162,6 +163,13 @@ function sa(t,v){v=typeof v=='number'?Math.max(0,Math.round(v)||0):(parseInt(Str
  if(v>mx){v=mx;toast('총 투자금은 '+f0(CAP)+'을 넘을 수 없어 '+f0(mx)+'로 조정했어요')}pf[t]=v;sv();render()}
 const stepOf=()=>Math.max(100,Math.round(CAP/10000)*100),st=(t,d)=>sa(t,(pf[t]||0)+d*stepOf());
 function rm(t){delete pf[t];sv();render()}
+function closeM(){const m=document.getElementById('mdl');if(m)m.remove()}
+function askRm(t){const s=STOCKS.find(x=>x.t==t);if(!s)return;closeM();
+ const d=document.createElement('div');d.className='mdl';d.id='mdl';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');
+ d.innerHTML=`<div class="bx"><p><b>${s.n}</b> (${s.t})<br>해당 종목을 삭제하시겠습니까?</p><div class="bt"><button id="mn">아니오</button><button class="y" id="my">예</button></div></div>`;
+ d.addEventListener('click',e=>{if(e.target===d)closeM()});document.body.appendChild(d);
+ $('#mn').onclick=closeM;$('#my').onclick=()=>{closeM();rm(t);toast(s.n+' 삭제했어요')};$('#mn').focus()}
+document.addEventListener('keydown',e=>{if(e.key=='Escape')closeM()});
 function tg(t){if(t in pf)return rm(t);const s=STOCKS.find(x=>x.t==t),c=tot().cash;if(c<s.p)return toast('남은 현금이 부족해요');pf[t]=Math.min(Math.max(Math.round(CAP/1000)*100,100),c);sv();render();toast(s.t+' 담음 · 구성 탭에서 금액을 조정하세요')}
 function go(t){tab=t;document.body.dataset.t=t;V[t]();window.scrollTo(0,0);nv()}
 function render(){hd();nv();if(tab=='x'&&$('#L'))list();else V[tab]()}
@@ -226,7 +234,7 @@ function vp(){
  const{h,inv,cash}=tot(),L=live(h),ma=mon(h),mc=ma.filter(x=>x>0).length,miss=ma.map((v,i)=>v>0?0:i+1).filter(Boolean);
  const ck=(t,ok)=>`<div class="ck ${ok?'ok':''}"><u>${ok?'✓':'○'}</u>${t}</div>`;
  $('#v').innerHTML=`<h2>${f0(CAP)} 포트폴리오 만들기</h2><div class="box">${ck(`최소 ${MIN}개 종목 (현재 ${L.length}개)`,L.length>=MIN)}${ck(mc==12?'12개월 배당 수령 (12/12개월 모두 채움)':mc==0?'12개월 배당 수령 (아직 배당 받는 달이 없어요)':`12개월 배당 수령 (${mc}/12개월 · 빈 달: ${miss.map(m=>m+'월').join(', ')})`,mc==12)}${ck('총 투자금 '+f0(CAP)+' 이내',inv<=CAP)}</div>`+
- (h.length?h.map(x=>`<div class="c"><div class="ch"><div><b>${x.n}</b> <span class="tk">${x.t}</span><div class="mu">현재주가 ${f2(x.p)}</div></div><button class="x" onclick="rm('${x.t}')">삭제</button></div>
+ (h.length?h.map(x=>`<div class="c"><div class="ch"><div><b>${x.n}</b> <span class="tk">${x.t}</span><div class="mu">현재주가 ${f2(x.p)}</div></div><button class="x" onclick="askRm('${x.t}')">삭제</button></div>
  <div class="ir"><button onclick="st('${x.t}',-1)" aria-label="투자금 감소">−</button><input inputmode="numeric" value="${x.amt}" onchange="sa('${x.t}',this.value)" aria-label="투자금 입력 $"><button onclick="st('${x.t}',1)" aria-label="투자금 증가">+</button></div>
  <div class="g">${K('매수 수량',x.sh+'주')}${K('실제 투자금',f0(x.cost),'',x.cost)}${K('예상 연배당',f0(x.div),'ac',x.div)}</div>${x.sh==0?'<div class="mu dn" style="margin-top:6px">투자금이 현재주가보다 작아 0주입니다.</div>':''}</div>`).join(''):emp())+
  (h.length?`<div class="mu">입력 금액 ÷ 현재주가를 내림해 정수 주식만 매수합니다. 버튼 한 번에 ±${f0(stepOf())}. 남은 현금: <b class="ac">${f0(cash)}</b> <span class="mu">≈ ${kw(cash)}</span></div>`:'');
