@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>나도 이제 월가 투자자! – 덤 머니</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#070d1a;--card:#0f1b33;--line:#22345c;--tx:#e8eefc;--mut:#8da0c8;--up:#22c55e;--dn:#ef4444;--gold:#f5c04a;--dis:#2a3350}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#12224a,var(--bg) 60%);color:var(--tx);font-family:-apple-system,"Noto Sans KR",sans-serif;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+h1{font-size:20px;margin:4px 0}h2{font-size:18px;margin:0 0 6px}.mut{color:var(--mut);font-size:13px}.big{font-size:34px;font-weight:800}
+.up{color:var(--up)}.dn{color:var(--dn)}.gold{color:var(--gold)}
+button{font:inherit;color:var(--tx);background:#1b3a7a;border:1px solid #2f5bb5;border-radius:12px;padding:14px;font-size:17px;font-weight:700;cursor:pointer;width:100%}
+button:disabled{background:var(--dis);color:#6b7794;border-color:var(--dis);cursor:not-allowed}
+button.sel{outline:3px solid var(--gold)}input{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#0a1427;color:var(--tx);font-size:17px;margin:8px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row{display:grid;grid-template-columns:110px 1fr 90px;gap:8px;align-items:center;margin:8px 0;font-size:14px}
+.bar{height:20px;background:#0a1427;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#2f7bff,var(--gold));transition:width .8s}
+.pop{animation:pop .6s}@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+.foot{text-align:center;color:var(--mut);font-size:12px;margin:16px 0}#net{color:var(--dn);font-size:12px;text-align:center}
+.buy{background:#14532d;border-color:#22c55e}.sell{background:#7f1d1d;border-color:#ef4444}.buy:disabled,.sell:disabled{background:var(--dis)}
+/* admin */
+.adm{max-width:1800px;padding:24px}.adm .cols{display:grid;grid-template-columns:2fr 1fr;gap:20px}.adm h1{font-size:34px}.adm .row{grid-template-columns:220px 1fr 140px;font-size:22px}.adm .bar{height:34px}
+.ctl{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.ctl button{font-size:20px;padding:20px}.pl{max-height:520px;overflow:auto;font-size:18px}.pl div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="net" hidden>⚠ 연결이 끊겼습니다. 자동으로 다시 연결 중…</div>
+<script>
+// ★ Supabase 프로젝트 설정 (Project Settings → API)
+const SB_URL='https://YOUR-PROJECT.supabase.co', SB_KEY='YOUR_ANON_KEY';
+
+const $=s=>document.querySelector(s), app=$('#app'), INIT=30000000;
+const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
+const rate=t=>{const v=(t/INIT-1)*100;return (v>=0?'+':'')+v.toFixed(2)+'%'};
+const pc=v=>(v>=0?'+':'')+Math.round(v*100)+'%', cl=v=>v>=0?'up':'dn';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const FOOT='<div class="foot">모든 수익률과 금액은 교육용 가상 시나리오입니다. · 방구석월가</div>';
+const ORDER=['WAITING','OPEN','VOTING_CLOSED','VOTES_REVEALED','RESULT_REVEALED','COMPLETED'];
+
+async function rpc(fn,args){
+  const r=await fetch(`${SB_URL}/rest/v1/rpc/${fn}`,{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'},body:JSON.stringify(args)});
+  const j=await r.json().catch(()=>null); if(!r.ok) throw new Error((j&&j.message)||'ERR'); return j;
+}
+// ── 거래 규칙 (서버에서도 동일하게 검증) ──
+const ALL=[{key:'BUY',label:'전액 매수',c:'buy'},{key:'HOLD',label:'계속 보유'},{key:'SELL',label:'전량 매도',c:'sell'},{key:'WAIT',label:'관망'}];
+function getAllowedActions(pos){return pos==='CASH'?['BUY','WAIT']:pos==='INVESTED'?['HOLD','SELL']:[]}
+function labelMap(r){
+  if(r.type==='POLL') return Object.fromEntries(r.opts.map(o=>[o.key,o.label]));
+  const m={}; ALL.forEach(a=>m[a.key]=(r.labels&&r.labels[a.key])||a.label); return m;
+}
+function bars(t,r){
+  const L={...labelMap(r),NONE:'미응답'},ks=Object.keys(L),tot=ks.reduce((a,k)=>a+(+t[k]||0),0)||1;
+  return ks.map(k=>{const n=+t[k]||0,p=n/tot*100;return `<div class="row"><span>${esc(L[k])}</span><div class="bar"><i style="width:${p}%"></i></div><b>${n}명 (${p.toFixed(0)}%)</b></div>`}).join('');
+}
+
+// ───────────── 참가자 ─────────────
+let pid=localStorage.getItem('dm_pid'),last='';
+function joinView(msg=''){
+  app.innerHTML=`<div class="wrap"><div class="card" style="text-align:center"><h1>나도 이제 월가 투자자!</h1><h2 class="gold">덤 머니</h2><div class="mut">내 돈 3,000만 원을 지켜라</div>
+  <input id="nick" maxlength="12" placeholder="닉네임 입력 (최대 12자)"><div class="dn">${msg}</div><button id="go">월가 입장하기</button></div>${FOOT}</div>`;
+  $('#go').onclick=async()=>{try{pid=await rpc('join_game',{p_nick:$('#nick').value});localStorage.setItem('dm_pid',pid);pTick()}catch(e){joinView(/DUP/.test(e.message)?'이미 사용 중인 닉네임입니다.':/BAD/.test(e.message)?'닉네임은 1~12자로 입력해 주세요.':'입장 실패: '+e.message)}};
+}
+async function vote(a){try{await rpc('submit_vote',{p_id:pid,p_action:a});last='';pTick()}catch(e){alert('선택할 수 없습니다: '+e.message)}}
+window.vote=vote;
+function pRender(s){
+  const m=s.me,r=s.round,st=s.status,L=labelMap(r),tot=m.total;
+  let h=`<div class="wrap"><div class="card"><div class="mut">${esc(m.nickname)} · ${m.position==='CASH'?'현금 보유':'주식 보유'}</div>
+  <div class="mut">현재 총자산</div><div class="big">${won(tot)}</div>
+  <div class="${cl(tot-INIT)}" style="font-weight:700">${rate(tot)} <span class="mut">(초기 ${won(INIT)})</span></div>
+  <div class="mut" style="margin-top:6px">현금 ${won(m.cash)} · 게임스탑 ${won(m.stock)}</div></div>`;
+  const head=`<div class="mut">${r.id}번 문제</div><h2>${esc(r.title)}</h2>`;
+  if(st==='WAITING') h+=`<div class="card">${head}<div class="mut">강사가 문제를 열 때까지 기다려 주세요.</div></div>`;
+  else if(st==='OPEN'){
+    h+=`<div class="card">${head}<p class="mut">${esc(r.description||'')}</p><p><b>${esc(r.question)}</b></p>`;
+    if(r.type==='TRADE'){const ok=getAllowedActions(m.position);
+      h+=`<div class="grid">${ALL.map(a=>`<button class="${a.c||''} ${s.my_vote===a.key?'sel':''}" ${ok.includes(a.key)?'':'disabled'} onclick="vote('${a.key}')">${esc(L[a.key])}</button>`).join('')}</div>`;
+    } else h+=r.opts.map(o=>`<button style="margin:6px 0" class="${s.my_vote===o.key?'sel':''}" onclick="vote('${o.key}')">${esc(o.label)}</button>`).join('');
+    h+=`<p class="mut">${s.my_vote?'✅ 투자 선택이 제출되었습니다. 마감 전까지 변경할 수 있습니다.':'선택해 주세요. 마감 전까지 변경할 수 있습니다.'}</p></div>`;
+  }
+  else if(st==='VOTING_CLOSED') h+=`<div class="card">${head}<p>투표가 마감되었습니다.</p><div class="mut">내 선택: ${s.my_vote?esc(L[s.my_vote]):'미응답'}<br>결과 공개를 기다려 주세요.</div></div>`;
+  else if(st==='VOTES_REVEALED') h+=`<div class="card pop">${head}<b>전체 참가자의 선택</b>${bars(s.tally,r)}<div class="mut">${r.type==='TRADE'?'주가 결과 공개를 기다려 주세요.':'이 문제는 자산 변동이 없습니다.'}</div></div>`;
+  else if(st==='RESULT_REVEALED'){const x=s.result;
+    h+=`<div class="card pop">${head}<div class="mut">이번 시장 수익률</div><div class="big ${cl(s.rate)}">${pc(s.rate)}</div>`;
+    if(x) h+=`<div style="margin-top:8px">나의 선택: <b>${esc(L[x.action])}</b>${x.responded?'':' <span class="mut">(미응답 자동 처리)</span>'}</div>
+    <div class="mut">이전 자산 ${won(x.prev_total)}</div><div class="mut">현재 자산</div><div class="big ${cl(x.new_total-x.prev_total)}">${won(x.new_total)}</div>
+    <div class="${cl(x.new_total-INIT)}">최초 투자금 대비 ${rate(x.new_total)}</div>`;
+    h+=`<div class="mut" style="margin-top:8px">다음 문제를 기다려 주세요.</div></div>`;
+  }
+  else if(st==='COMPLETED') h+=`<div class="card pop" style="text-align:center"><h2 class="gold">🏁 게임 종료</h2><div class="mut">최종 자산</div><div class="big ${cl(tot-INIT)}">${won(tot)}</div><div class="${cl(tot-INIT)}" style="font-size:22px;font-weight:800">${rate(tot)}</div><p>${s.rank}위 / ${s.players}명 · ${m.position==='CASH'?'현금':'주식'} 보유로 종료</p><div class="mut">같은 3,000만 원으로 시작해도 선택에 따라 결과가 달라집니다.</div></div>`;
+  app.innerHTML=h+FOOT+'</div>';
+}
+async function pTick(){
+  try{const s=await rpc('get_player_state',{p_id:pid});$('#net').hidden=true;const k=JSON.stringify(s);if(k!==last){last=k;pRender(s)}}
+  catch(e){if(/NO_PLAYER/.test(e.message)){localStorage.removeItem('dm_pid');pid=null;joinView('세션이 초기화되었습니다. 다시 입장해 주세요.');return}$('#net').hidden=false}
+}
+
+// ───────────── 강사 ─────────────
+let pin=sessionStorage.getItem('dm_pin'),qrDone=false;
+async function act(c){try{await rpc('admin_action',{p_pin:pin,p_cmd:c});last='';aTick()}catch(e){if(!/INVALID_STEP/.test(e.message))alert(e.message);aTick()}}
+window.act=act;
+function aRender(s){
+  const r=s.round,i=ORDER.indexOf(s.status),T=r.type==='TRADE',L=labelMap(r),isLast=s.round_no===s.total_rounds;
+  const b=(txt,cmd,en)=>`<button ${en?'':'disabled'} onclick="act('${cmd}')">${txt}</button>`;
+  const A=i>=3?'✔ 투표 결과 공개됨':'📊 투표 결과 공개', B=!T?'주가 결과 없음(자산 변동 없음)':i>=4?'✔ 주가 결과 공개됨':'📈 주가 결과 공개';
+  const canNext=(T&&s.status==='RESULT_REVEALED')||(!T&&s.status==='VOTES_REVEALED');
+  let main=`<div class="card"><div class="mut" style="font-size:20px">${r.id} / ${s.total_rounds}번 · 영화 ${r.vstart} ~ ${r.vend} · ${T?'거래 문제':'투표 문제(자산 변동 없음)'} · 상태 <b class="gold">${s.status}</b></div>
+  <h1>${esc(r.title)}</h1><div class="mut" style="font-size:20px">${esc(r.description||'')}</div><p style="font-size:26px"><b>${esc(r.question)}</b></p></div>
+  <div class="card ctl">${b('▶ 문제 열기','open',s.status==='WAITING')}${b('⏹ 투표 마감','close',s.status==='OPEN')}${b(A,'reveal_votes',s.status==='VOTING_CLOSED')}${b(B,'reveal_result',s.status==='VOTES_REVEALED'&&T)}${b(isLast?'🏁 최종 결과 발표':'⏭ 다음 문제','next',canNext)}</div>`;
+  if(s.status!=='COMPLETED'){
+    main+=`<div class="card"><h2>응답 ${s.n_voted} / 접속 ${s.n_players}명</h2>`;
+    main+= i>=3? bars(s.tally,r) : `<div class="mut" style="font-size:20px">선택 비율은 [투표 결과 공개] 후 표시됩니다. (현재 응답 ${s.n_voted}명)</div>`;
+    main+='</div>';
+    if(s.status==='RESULT_REVEALED'&&T){const d=s.res.new-s.res.prev;
+      main+=`<div class="card pop"><div class="mut">시장 결과</div><div class="big ${cl(s.rate)}" style="font-size:56px">${esc(r.title)}: ${pc(s.rate)}</div>
+      <div style="font-size:24px">전체 참가자 자산 합계 ${won(s.res.prev)} → <b class="${cl(d)}">${won(s.res.new)}</b> (${d>=0?'+':''}${won(d)})</div></div>`;}
+  } else main+=finalView(s);
+  const ctl=`<div style="margin-top:8px"><button style="width:auto;font-size:14px;padding:8px 12px;background:#3a1f1f" onclick="if(confirm('자산·응답을 초기화합니다. 참가자는 유지됩니다.'))act('reset')">게임 초기화</button>
+  <button style="width:auto;font-size:14px;padding:8px 12px;background:#3a1f1f" onclick="if(confirm('참가자까지 모두 삭제합니다.'))act('reset_all')">새 강의(참가자 삭제)</button></div>`;
+  const side=`<div class="card"><div class="mut" style="font-size:18px">참가자 입장 QR</div><div id="qr" style="background:#fff;padding:10px;width:fit-content;border-radius:8px"></div><div class="mut">접속 ${s.n_players}명</div></div>
+  <div class="card"><h2>참가자 자산 (${s.n_players}명)</h2><div class="pl">${s.players.map((p,k)=>`<div><span>${k+1}. ${esc(p.nickname)} <span class="mut">${p.position==='CASH'?'현금':'주식'}</span></span><b class="${cl(p.total-INIT)}">${won(p.total)} (${rate(p.total)})</b></div>`).join('')}</div></div>`;
+  app.innerHTML=`<div class="wrap adm"><div class="cols"><div>${main}${ctl}</div><div>${side}</div></div>${FOOT}</div>`;
+  const q=$('#qr'); if(q&&window.QRCode) new QRCode(q,{text:location.origin+location.pathname,width:200,height:200});
+}
+function finalView(s){
+  const P=s.players,n=P.length||1,avg=P.reduce((a,p)=>a+p.total,0)/n,keep=P.filter(p=>p.total>=INIT).length,lose=P.length-keep,cash=P.filter(p=>p.position==='CASH').length;
+  const bins=[0,1e7,2e7,3e7,4e7,6e7,9e7,1.2e8],cnt=bins.map((lo,k)=>P.filter(p=>p.total>=lo&&(k===bins.length-1||p.total<bins[k+1])).length),mx=Math.max(...cnt,1);
+  const nm=v=>v>=1e8?'1.2억+':(v/1e7)+'천만';
+  return `<div class="card pop"><h1 class="gold">🏁 최종 결과</h1><div style="font-size:24px;line-height:1.8">전체 참가자 ${P.length}명 · 평균 최종 자산 <b>${won(avg)}</b> (${rate(avg)})<br>
+  원금 이상 유지 <b class="up">${keep}명</b> · 원금 손실 <b class="dn">${lose}명</b> · 현금 종료 ${cash}명 · 주식 종료 ${P.length-cash}명<br>🥇 1위 ${P[0]?esc(P[0].nickname)+' '+won(P[0].total):'-'}</div></div>
+  <div class="card"><h2>최종 자산 분포</h2><div style="display:flex;gap:8px;align-items:flex-end;height:200px">${cnt.map((c,k)=>`<div style="flex:1;text-align:center"><div style="height:${c/mx*160}px;background:${bins[k]>=INIT?'var(--up)':'var(--dn)'};border-radius:6px 6px 0 0"></div><b>${c}</b><div class="mut">${nm(bins[k])}~</div></div>`).join('')}</div></div>`;
+}
+async function aTick(){
+  try{const s=await rpc('admin_state',{p_pin:pin});$('#net').hidden=true;const k=JSON.stringify(s);if(k!==last){last=k;aRender(s)}}
+  catch(e){if(/ADMIN_AUTH/.test(e.message)){sessionStorage.removeItem('dm_pin');pin=prompt('강사 PIN');if(pin)sessionStorage.setItem('dm_pin',pin);return}$('#net').hidden=false}
+}
+
+// ───────────── 시작 ─────────────
+if(location.search.includes('admin')){ if(!pin){pin=prompt('강사 PIN');if(pin)sessionStorage.setItem('dm_pin',pin)} aTick(); setInterval(aTick,1500); }
+else { if(pid) pTick(); else joinView(); setInterval(()=>{if(pid)pTick()},2000); }
+</script>
+</body>
+</html>
