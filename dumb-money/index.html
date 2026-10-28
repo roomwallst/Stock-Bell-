@@ -28,7 +28,7 @@ button.sel{outline:3px solid var(--gold)}input{width:100%;padding:14px;border-ra
 <div id="app"></div><div id="net" hidden>⚠ 연결이 끊겼습니다. 자동으로 다시 연결 중…</div>
 <script>
 // ★ Supabase 프로젝트 설정 (Project Settings → API)
-const SB_URL='https://YOUR-PROJECT.supabase.co', SB_KEY='YOUR_ANON_KEY';
+const SB_URL='https://mryldhntskcayiylgsav.supabase.co', SB_KEY='sb_publishable_Sp5wWaZemJMx3wmteQ3Q7g_zq5vRd3G';
 
 const $=s=>document.querySelector(s), app=$('#app'), INIT=30000000;
 const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
@@ -55,13 +55,13 @@ function bars(t,r){
 }
 
 // ───────────── 참가자 ─────────────
-let pid=localStorage.getItem('dm_pid'),last='';
+let pid=localStorage.getItem('dm2_pid'),last='';
 function joinView(msg=''){
   app.innerHTML=`<div class="wrap"><div class="card" style="text-align:center"><h1>나도 이제 월가 투자자!</h1><h2 class="gold">덤 머니</h2><div class="mut">내 돈 3,000만 원을 지켜라</div>
   <input id="nick" maxlength="12" placeholder="닉네임 입력 (최대 12자)"><div class="dn">${msg}</div><button id="go">월가 입장하기</button></div>${FOOT}</div>`;
-  $('#go').onclick=async()=>{try{pid=await rpc('join_game',{p_nick:$('#nick').value});localStorage.setItem('dm_pid',pid);pTick()}catch(e){joinView(/DUP/.test(e.message)?'이미 사용 중인 닉네임입니다.':/BAD/.test(e.message)?'닉네임은 1~12자로 입력해 주세요.':'입장 실패: '+e.message)}};
+  $('#go').onclick=async()=>{try{pid=await rpc('dm_join',{p_nick:$('#nick').value});localStorage.setItem('dm2_pid',pid);pTick()}catch(e){joinView(/DUP/.test(e.message)?'이미 사용 중인 닉네임입니다.':/BAD/.test(e.message)?'닉네임은 1~12자로 입력해 주세요.':'입장 실패: '+e.message)}};
 }
-async function vote(a){try{await rpc('submit_vote',{p_id:pid,p_action:a});last='';pTick()}catch(e){alert('선택할 수 없습니다: '+e.message)}}
+async function vote(a){try{await rpc('dm_vote',{p_id:pid,p_action:a});last='';pTick()}catch(e){alert('선택할 수 없습니다: '+e.message)}}
 window.vote=vote;
 function pRender(s){
   const m=s.me,r=s.round,st=s.status,L=labelMap(r),tot=m.total;
@@ -91,13 +91,13 @@ function pRender(s){
   app.innerHTML=h+FOOT+'</div>';
 }
 async function pTick(){
-  try{const s=await rpc('get_player_state',{p_id:pid});$('#net').hidden=true;const k=JSON.stringify(s);if(k!==last){last=k;pRender(s)}}
+  try{const s=await rpc('dm_player_state',{p_id:pid});$('#net').hidden=true;const k=JSON.stringify(s);if(k!==last){last=k;pRender(s)}}
   catch(e){if(/NO_PLAYER/.test(e.message)){localStorage.removeItem('dm_pid');pid=null;joinView('세션이 초기화되었습니다. 다시 입장해 주세요.');return}$('#net').hidden=false}
 }
 
 // ───────────── 강사 ─────────────
 let pin=sessionStorage.getItem('dm_pin'),qrDone=false;
-async function act(c){try{await rpc('admin_action',{p_pin:pin,p_cmd:c});last='';aTick()}catch(e){if(!/INVALID_STEP/.test(e.message))alert(e.message);aTick()}}
+async function act(c){try{await rpc('dm_admin_action',{p_pin:pin,p_cmd:c});last='';aTick()}catch(e){if(!/INVALID_STEP/.test(e.message))alert(e.message);aTick()}}
 window.act=act;
 function aRender(s){
   const r=s.round,i=ORDER.indexOf(s.status),T=r.type==='TRADE',L=labelMap(r),isLast=s.round_no===s.total_rounds;
@@ -131,7 +131,7 @@ function finalView(s){
   <div class="card"><h2>최종 자산 분포</h2><div style="display:flex;gap:8px;align-items:flex-end;height:200px">${cnt.map((c,k)=>`<div style="flex:1;text-align:center"><div style="height:${c/mx*160}px;background:${bins[k]>=INIT?'var(--up)':'var(--dn)'};border-radius:6px 6px 0 0"></div><b>${c}</b><div class="mut">${nm(bins[k])}~</div></div>`).join('')}</div></div>`;
 }
 async function aTick(){
-  try{const s=await rpc('admin_state',{p_pin:pin});$('#net').hidden=true;const k=JSON.stringify(s);if(k!==last){last=k;aRender(s)}}
+  try{const s=await rpc('dm_admin_state',{p_pin:pin});$('#net').hidden=true;const k=JSON.stringify(s);if(k!==last){last=k;aRender(s)}}
   catch(e){if(/ADMIN_AUTH/.test(e.message)){sessionStorage.removeItem('dm_pin');pin=prompt('강사 PIN');if(pin)sessionStorage.setItem('dm_pin',pin);return}$('#net').hidden=false}
 }
 
