@@ -19,6 +19,17 @@ button.sel{outline:3px solid var(--gold)}input{width:100%;padding:14px;border-ra
 .pop{animation:pop .6s}@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
 .foot{text-align:center;color:var(--mut);font-size:12px;margin:16px 0}#net{color:var(--dn);font-size:12px;text-align:center}
 .buy{background:#14532d;border-color:#22c55e}.sell{background:#7f1d1d;border-color:#ef4444}.buy:disabled,.sell:disabled{background:var(--dis)}
+/* join hero */
+body.join{background:#0b1226 url(bg.jpg) 60% 30%/cover no-repeat fixed}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;padding:28px 18px 20px;background:linear-gradient(180deg,rgba(7,13,26,.7) 0,rgba(7,13,26,.05) 32%,rgba(7,13,26,.25) 52%,rgba(7,13,26,.97) 100%)}
+.hero .top{text-align:center;animation:rise .8s both}.hero .tag{display:inline-block;letter-spacing:2px;font-size:13px;font-weight:800;color:#1a1200;background:linear-gradient(90deg,#f5c04a,#ffdf8a);padding:6px 14px;border-radius:999px;box-shadow:0 4px 18px rgba(245,192,74,.45)}
+.hero h1{font-family:Impact,"Arial Black",sans-serif;font-size:clamp(46px,15vw,72px);line-height:1;margin:14px 0 4px;letter-spacing:1px;text-shadow:0 3px 0 #000,0 8px 24px rgba(0,0,0,.6)}
+.hero h1 b{color:#ff2a1f}.hero .sub{font-size:19px;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.9)}
+.hero .panel{max-width:440px;width:100%;margin:0 auto;padding:18px;border-radius:20px;background:rgba(10,20,40,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 60px rgba(0,0,0,.55);animation:rise 1s .15s both}
+.hero .chips{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}.hero .chips span{font-size:12px;color:#cfe0ff;background:rgba(255,255,255,.09);padding:5px 10px;border-radius:999px}
+.hero input{text-align:center;font-weight:700;background:rgba(5,10,22,.7)}.hero input:focus{outline:2px solid var(--gold)}
+.hero .go{background:linear-gradient(90deg,#f5c04a,#ffdf8a);color:#1a1200;border:0;font-size:19px;box-shadow:0 8px 24px rgba(245,192,74,.4)}.hero .go:active{transform:scale(.98)}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 /* admin */
 .adm{max-width:1800px;padding:24px}.adm .cols{display:grid;grid-template-columns:2fr 1fr;gap:20px}.adm h1{font-size:34px}.adm .row{grid-template-columns:220px 1fr 140px;font-size:22px}.adm .bar{height:34px}
 .ctl{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.ctl button{font-size:20px;padding:20px}.pl{max-height:520px;overflow:auto;font-size:18px}.pl div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
@@ -57,13 +68,18 @@ function bars(t,r){
 // ───────────── 참가자 ─────────────
 let pid=localStorage.getItem('dm2_pid'),last='';
 function joinView(msg=''){
-  app.innerHTML=`<div class="wrap"><div class="card" style="text-align:center"><h1>나도 이제 월가 투자자!</h1><h2 class="gold">덤 머니</h2><div class="mut">내 돈 3,000만 원을 지켜라</div>
-  <input id="nick" maxlength="12" placeholder="닉네임 입력 (최대 12자)"><div class="dn">${msg}</div><button id="go">월가 입장하기</button></div>${FOOT}</div>`;
+  document.body.classList.add('join');
+  app.innerHTML=`<div class="hero"><div class="top"><span class="tag">방구석월가 · 실시간 투자 체험</span>
+  <h1>DUMB <b>MONEY</b></h1><div class="sub">나도 이제 월가 투자자!</div><div class="gold" style="font-weight:800;margin-top:4px">내 돈 3,000만 원을 지켜라</div></div>
+  <div class="panel"><div class="chips"><span>가상 3,000만 원 지급</span><span>영화 속 8개 장면</span><span>실시간 투자 결정</span></div>
+  <input id="nick" maxlength="12" placeholder="닉네임 입력 (최대 12자)" autocomplete="off"><div class="dn" style="text-align:center;min-height:20px;font-size:14px">${msg}</div>
+  <button id="go" class="go">월가 입장하기 →</button><div class="foot" style="margin:10px 0 0">모든 금액과 수익률은 교육용 가상 시나리오입니다.</div></div></div>`;
   $('#go').onclick=async()=>{try{pid=await rpc('dm_join',{p_nick:$('#nick').value});localStorage.setItem('dm2_pid',pid);pTick()}catch(e){joinView(/DUP/.test(e.message)?'이미 사용 중인 닉네임입니다.':/BAD/.test(e.message)?'닉네임은 1~12자로 입력해 주세요.':'입장 실패: '+e.message)}};
 }
 async function vote(a){try{await rpc('dm_vote',{p_id:pid,p_action:a});last='';pTick()}catch(e){alert('선택할 수 없습니다: '+e.message)}}
 window.vote=vote;
 function pRender(s){
+  document.body.classList.remove('join');
   const m=s.me,r=s.round,st=s.status,L=labelMap(r),tot=m.total;
   let h=`<div class="wrap"><div class="card"><div class="mut">${esc(m.nickname)} · ${m.position==='CASH'?'현금 보유':'주식 보유'}</div>
   <div class="mut">현재 총자산</div><div class="big">${won(tot)}</div>
@@ -92,7 +108,7 @@ function pRender(s){
 }
 async function pTick(){
   try{const s=await rpc('dm_player_state',{p_id:pid});$('#net').hidden=true;const k=JSON.stringify(s);if(k!==last){last=k;pRender(s)}}
-  catch(e){if(/NO_PLAYER/.test(e.message)){localStorage.removeItem('dm_pid');pid=null;joinView('세션이 초기화되었습니다. 다시 입장해 주세요.');return}$('#net').hidden=false}
+  catch(e){if(/NO_PLAYER/.test(e.message)){localStorage.removeItem('dm2_pid');pid=null;joinView('세션이 초기화되었습니다. 다시 입장해 주세요.');return}$('#net').hidden=false}
 }
 
 // ───────────── 강사 ─────────────
